@@ -20,6 +20,7 @@ void match(int);
 
 int main()
 {
+	
 	tree_t *value;	
 
 	/*intiazlie the first token */
@@ -33,11 +34,11 @@ int main()
 	
 	/*semantic evaluation */
 	fprintf(stderr, "Value = %d\n", tree_eval(value));
+
+	main();
 }
 
 /* syntax analyzer (parser) */
-
-
 
 /* E -> T E'
  * E'-> + T E' | E' -> - T E' | empty
@@ -51,8 +52,8 @@ tree_t *expr()
 			match('+');
 			value = mktree( '+', value, term());
 		} else if( curr_token == '-'){
-			match('+');
-			value = mktree( '+', value, term());
+			match('-');
+			value = mktree( '-', value, term());
 		} 
 	}
 	return value;
@@ -73,7 +74,7 @@ tree_t *term()
 		{
 			match('/');
 			value = mktree('/', value, factor());
-		}
+		} 
 	}
 	return value;
 }
@@ -88,7 +89,7 @@ tree_t *factor()
 		match(')');
 	} else if( curr_token == '-'){
 		match('-');
-		value = mkrtree('-', factor(), NULL);
+		value = mktree('-', factor(), NULL);
 	} else if ( curr_token == NUM ) {
 		value = mktree(NUM, NULL, NULL);
 		value->attribute = curr_attribute;
@@ -104,7 +105,7 @@ tree_t *factor()
 /* lexical analyzer (tokenizer/scanner) */
 int get_next_token()
 {
-	int c, value, curr_attribute;
+	int c, value;
 	while(1){
 		switch(c = getchar()) {
 		case ' ': case '\t':
@@ -113,7 +114,7 @@ int get_next_token()
 		   	fprintf(stderr, "[EOS]%c" , c); // displays end of stream
 			return EOS; // end of stream
 		case '+': case '-':   /* addition operator */
-			fprintf(stderr, "%c",c);
+			fprintf(stderr, "[ADDOP:%c]",c);
 			return c;
 		case '*': case '/': /* subtraction operator */
 			fprintf(stderr, "[MULOP:%c]", c);
