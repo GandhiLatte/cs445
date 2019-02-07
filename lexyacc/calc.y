@@ -24,6 +24,7 @@ extern int yyerror(char *);
 %left '*'
 
 %type <tval> expr
+
 %%
 
 start: expr '\n'
