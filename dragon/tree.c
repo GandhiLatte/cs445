@@ -22,10 +22,10 @@ tree_t *mktree(int type, tree_t *left, tree_t *right)
 }
 
 /*specialized constructors */
-tree_t *mkid(char *sval)
+tree_t *mkid( node_t *name_ptr)
 {
     tree_t *p = mktree(ID, NULL, NULL);
-    p->attribute.sval = strdup(sval); /* memory leak? */
+    p->attribute.sval = name_ptr; /* memory leak? */
     return p;
 }
 

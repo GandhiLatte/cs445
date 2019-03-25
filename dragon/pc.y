@@ -76,14 +76,14 @@ program
 
 identifier_list
     : ID
-      { $$ = mkid(symtab_insert($1)); }
+      { $$ = mkid(scope_insert($1)); }
     | identifier_list ',' ID
-      { $$ = mktree(COMMA,$1,mkid(symtab_insert($3))); }
+      { $$ = mktree(COMMA,$1,mkid(scope_insert($3))); }
     ;
 
 declarations
     : declarations VAR identifier_list ':' type ';'
-      { update_type_information($3,$5); }
+      { /* add_type_information($3,$5); */ }
     | /*empty*/
     ;
 
@@ -149,13 +149,13 @@ statement
     ;
 
 variable
-    : ID { $$ = mkid($1);}
-    | ID '[' expression ']' { $$ = mktree(ARRAY_ACCESS,mkid($1), $3);}
+    : ID { $$ = mkid(scope_search_all(top_scope,$1));}
+    | ID '[' expression ']' { $$ = mktree(ARRAY_ACCESS,mkid(scope_search_all(top_scope,$1)), $3);}
     ;
 
 procedure_statement
-    : ID { $$ = mkid($1);}
-    | ID '(' expression_list ')' { $$ = mktree(PROCEDURE_CALL,mkid($1),$3);}
+    : ID { $$ = mkid(scope_search_all(top_scope,$1));}
+    | ID '(' expression_list ')' { $$ = mktree(PROCEDURE_CALL,mkid(scope_search_all(top_scope,$1)),$3);}
     ;
 
 expression_list
@@ -180,9 +180,9 @@ term
     ;
 
 factor
-    : ID { $$ = mkid(symtab_search($1)));}
-    | ID '[' expression ']' { $$ = mktree(ARRAY_ACCESS,mkid(symtab_search($1)),$3); }
-    | ID '(' expression_list ')' { $$ = mktree(FUNCTION_CALL,mkid(symtab_search($1)),$3); }
+    : ID { $$ = mkid(scope_search_all(top_scope,$1));}
+    | ID '[' expression ']' { $$ = mktree(ARRAY_ACCESS,mkid(scope_search_all(top_scope,$1)),$3); }
+    | ID '(' expression_list ')' { $$ = mktree(FUNCTION_CALL,mkid(scope_search_all(top_scope,$1)),$3); }
     | INUM { $$ = mkinum($1); $$->attribute.ival = $1; }
     | RNUM { $$ = mkrnum($1); $$->attribute.rval = $1; }
     | '(' expression ')' { $$ = $2; }

@@ -3,11 +3,20 @@ FLAGS = -g
 YACC = yacc
 LEX = lex
 
-mypc: y.tab.o lex.yy.o 
-	$(CC) $(FLAGS) -o mypc y.tab.o lex.yy.o -ll -ly
+mypc: tree.o scope.o node.o y.tab.o lex.yy.o
+	$(CC) $(FLAGS) -o mypc tree.o scope.o node.o y.tab.o lex.yy.o -ll -ly
 
 y.tab.o: y.tab.c
 	$(CC) $(FLAGS) -c y.tab.c
+
+tree.o: tree.c
+	$(CC) $(FLAGS) -c tree.c
+
+scope.o: scope.c
+	$(CC) $(FLAGS) -c scope.c
+
+node.o: node.c
+	$(CC) $(FLAGS) -c node.c
 
 lex.yy.o: lex.yy.c
 	$(CC) $(FLAGS) -c lex.yy.c
