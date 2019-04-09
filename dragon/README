@@ -3,6 +3,29 @@ TODO
 Implement type checking
 
 
+TINO HINTS:
+Create functions to pass trees and make sure the types are correct for each side of the trees
+Semantic Checker
+
+
+Put the checks in the semantic Checker
+
+Or
+
+Make dedicated functions in a dedicated files (semantic.c)
+- functions that check trees
+- chase down the tree
+- needs to know about the symbol table pointers
+
+
+below statement trees are syntax trees
+
+visbale line between declaration and usage
+
+anything ebfore the begin end is used purely for declaration
+
+semantic checking and code generation
+
 HINTS
 ------------
 Go down the semantic checklist
