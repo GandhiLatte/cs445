@@ -24,6 +24,10 @@ tree_t *mktree(int type, tree_t *left, tree_t *right)
 /*specialized constructors */
 tree_t *mkid( node_t *name_ptr)
 {
+    if(name_ptr == NULL)
+    {
+        yyerror("ID NOT FOUND");
+    }
     tree_t *p = mktree(ID, NULL, NULL);
     p->attribute.sval = name_ptr; /* memory leak? */
     return p;
@@ -49,6 +53,10 @@ tree_t *mkop(int type, int op, tree_t *left, tree_t *right)
     p->attribute.opval = op;
     return p;
 }
+
+//  have to add mkfor
+/* mkfor mkarray mkprog mksubprog */
+
 
 /*auiliary */
 int tree_eval(tree_t *t)

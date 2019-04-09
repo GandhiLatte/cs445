@@ -66,80 +66,80 @@ extern int yyerror(char *);
 
 %%
 
-program
-    : PROGRAM ID '(' identifier_list ')' ';'
+program:
+    | PROGRAM ID '(' identifier_list ')' ';'
      declarations
      subprogram_declarations
      compound_statement
      '.'
     ;
 
-identifier_list
-    : ID
+identifier_list:
+    | ID
       { $$ = mkid(scope_insert($1)); }
     | identifier_list ',' ID
       { $$ = mktree(COMMA,$1,mkid(scope_insert($3))); }
     ;
 
-declarations
-    : declarations VAR identifier_list ':' type ';'
+declarations:
+    | declarations VAR identifier_list ':' type ';'
       { /* add_type_information($3,$5); */ }
     | /*empty*/
     ;
 
-type
-    : standard_type
+type:
+    | standard_type
       { $$ = NULL; }
     | ARRAY '[' INUM DOTDOT INUM ']' OF standard_type
       { $$ = NULL; }
     | ARRAY '[' RNUM DOTDOT RNUM ']' OF standard_type
     ;
     
-standard_type
-    : INTEGER
+standard_type:
+    | INTEGER
     | REAL
     ;
 
-subprogram_declarations
-    : subprogram_declarations subprogram_declaration ';'
+subprogram_declarations:
+    | subprogram_declarations subprogram_declaration ';'
     | /*empty*/
     ;
 
-subprogram_declaration
-    : subprogram_head declarations subprogram_declarations  compound_statement
+subprogram_declaration:
+    | subprogram_head declarations subprogram_declarations  compound_statement
     ;
 
-subprogram_head
-    : FUNCTION ID arguments ':' standard_type ';'
+subprogram_head:
+    | FUNCTION ID arguments ':' standard_type ';'
     | PROCEDURE ID arguments ';'
     ;
 
-arguments
-    : '(' parameter_list ')'
+arguments:
+    | '(' parameter_list ')'
     | /* empty */
     ;
 
-parameter_list
-    : identifier_list ':' type
+parameter_list:
+    | identifier_list ':' type
     | parameter_list ';' identifier_list ':' type
     ;
 
-compound_statement
-    : BBEGIN optional_statements END { $$ = $2; }
+compound_statement:
+    | BBEGIN optional_statements END { $$ = $2; }
     ;
 
-optional_statements
-    : statement_list { $$ = $1; }
+optional_statements:
+    | statement_list { $$ = $1; }
     | /*empty */ { $$ = NULL; }
     ;
 
-statement_list
-    : statement { $$ = $1;}
+statement_list:
+    | statement { $$ = $1;}
     | statement_list ';' statement { $$ = mktree(COMMA,$1,$3); }
     ;
 
-statement
-    : variable ASSIGNOP expression { $$ = mktree(ASSIGNOP,$1,$3); }
+statement:
+    | variable ASSIGNOP expression { $$ = mktree(ASSIGNOP,$1,$3); }
     | procedure_statement { $$ = $1; }
     | compound_statement { $$ = $1; }
     | IF expression THEN statement ELSE statement
@@ -148,39 +148,42 @@ statement
       { $$ = mktree(WHILE,$2,$4); }
     ;
 
-variable
-    : ID { $$ = mkid(scope_search_all(top_scope,$1));}
+/* Matched and unmatched statement for dangling else problem
+    Example is in Dragon in chapter 3 */
+
+variable:
+    | ID { $$ = mkid(scope_search_all(top_scope,$1));}
     | ID '[' expression ']' { $$ = mktree(ARRAY_ACCESS,mkid(scope_search_all(top_scope,$1)), $3);}
     ;
 
-procedure_statement
-    : ID { $$ = mkid(scope_search_all(top_scope,$1));}
+procedure_statement:
+    | ID { $$ = mkid(scope_search_all(top_scope,$1));}
     | ID '(' expression_list ')' { $$ = mktree(PROCEDURE_CALL,mkid(scope_search_all(top_scope,$1)),$3);}
     ;
 
-expression_list
-    : expression { $$ = $1; }
+expression_list:
+    | expression { $$ = $1; }
     | expression_list ',' expression { $$ = mktree(COMMA,$1,$3); }
     ;
 
-expression
-    : simple_expression { $$ = $1; }
+expression:
+    | simple_expression { $$ = $1; }
     | simple_expression RELOP simple_expression { $$ = mkop(RELOP,$2,$1,$3);}
     ;
 
-simple_expression
-    : term { $$ = $1; }
+simple_expression:
+    | term { $$ = $1; }
     | ADDOP term { $$ = mkop(ADDOP,$1,$2,NULL); }
     | simple_expression ADDOP term { $$ = mkop(ADDOP,$2,$1,$3);}
     ;
 
-term
-    : factor { $$ = $1; } 
+term:
+    | factor { $$ = $1; } 
     | term MULOP factor { $$ = mkop(MULOP,$2,$1,$3) }
     ;
 
-factor
-    : ID { $$ = mkid(scope_search_all(top_scope,$1));}
+factor:
+    | ID { $$ = mkid(scope_search_all(top_scope,$1));}
     | ID '[' expression ']' { $$ = mktree(ARRAY_ACCESS,mkid(scope_search_all(top_scope,$1)),$3); }
     | ID '(' expression_list ')' { $$ = mktree(FUNCTION_CALL,mkid(scope_search_all(top_scope,$1)),$3); }
     | INUM { $$ = mkinum($1); $$->attribute.ival = $1; }
