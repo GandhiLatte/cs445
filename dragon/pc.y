@@ -16,6 +16,8 @@ extern int yyerror(char *);
     int opval;  /* RELOP ADDOP MULOP */     /*value relevant b/w parser and scanner */
     char *sval; /*ID */
     /**********************************/
+
+    
     tree_t *tval; /* tree struct */         /* syntax tree */
 }
 
@@ -105,7 +107,7 @@ subprogram_declarations:
     | /*empty*/
     ;
 
-subprogram_declaration:
+subprogram_declaration:     
     | subprogram_head declarations subprogram_declarations  compound_statement
     ;
 

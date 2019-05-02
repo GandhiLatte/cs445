@@ -8,7 +8,7 @@
 
 
 /* CONSTRUCTOR */
-node_t *mknode( char *)
+node_t *mknode( char *s)
 {
     node_t *p = (node_t *)malloc(sizeof(node_t));
     assert(p != NULL);
@@ -27,10 +27,10 @@ node_t *node_search( node_t *top, char *name )
             return p;
         p = p->next;
     }
-    return NULL:
+    return NULL;
 }
 
-node_t *node_insert( node_t top, char *name )
+node_t *node_insert( node_t *top, char *name )
 {
     node_t *p = mknode( name );
     p->next = top;
@@ -40,12 +40,11 @@ node_t *node_insert( node_t top, char *name )
 void node_print( node_t *top)
 {
     node_t *p = top;
-    fprintf("BEGIN LIST PRINT \n");
+    fprintf(stderr, "BEGIN LIST PRINT \n");
     while ( p != NULL )
     {
         fprintf(stderr, "[%s]", p->name);
         p = p->next;
     }
     fprintf(stderr, "END LIST PRINT\n");
-    
 }

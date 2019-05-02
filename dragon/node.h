@@ -12,5 +12,5 @@ node_t *mknode( char *);
 /* helpers */
 node_t *node_search( node_t *, char * );
 node_t *node_insert( node_t *, char * );
-void *node_print( node_t *);
+void node_print( node_t *);
 #endif

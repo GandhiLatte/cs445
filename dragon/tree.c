@@ -22,9 +22,9 @@ tree_t *mktree(int type, tree_t *left, tree_t *right)
 }
 
 /*specialized constructors */
-tree_t *mkid( node_t *name_ptr)
+tree_t *mkid(node_t *name_ptr)
 {
-    if(name_ptr == NULL)
+    if (name_ptr == NULL)
     {
         yyerror("ID NOT FOUND");
     }
@@ -57,7 +57,6 @@ tree_t *mkop(int type, int op, tree_t *left, tree_t *right)
 //  have to add mkfor
 /* mkfor mkarray mkprog mksubprog */
 
-
 /*auiliary */
 int tree_eval(tree_t *t)
 {
@@ -76,8 +75,11 @@ int tree_eval(tree_t *t)
         return tree_eval(t->left) * tree_eval(t->right);
     case '/':
         return tree_eval(t->left) / tree_eval(t->right);
-    case NUM:
-        return t->attribute;
+    case INUM:
+        return t->attribute.ival;
+    case RNUM:
+        return t->attribute.rval;
+    
     default:
         fprintf(stderr, "Tree Eval: unknown type %d\n", t->type);
         exit(1);
@@ -89,9 +91,9 @@ void tree_print(tree_t *t)
     aux_tree_print(t, 0);
 }
 
-void aux_tree_print(tree_t *t, int spaces)
+void aux_tree_print(tree_t *tree, int spaces)
 {
-    if (t == NULL)
+    if (tree == NULL)
         return;
 
     for (int i = 0; i < spaces; i++)
@@ -99,38 +101,35 @@ void aux_tree_print(tree_t *t, int spaces)
         fprintf(stderr, " ");
     }
 
-    switch (t->type)
+    switch (tree->type)
     {
     case ID:
-        fprintf(stderr, "[ID:%s]\n", t->attribute.sval);
+        fprintf(stderr, "[ID:%s]\n", tree->attribute.sval);
         break;
     case MULOP:
-        fprintf(stderr, "[MULOP:%d]\n", t->attribute.opval);
+        fprintf(stderr, "[MULOP:%d]\n", tree->attribute.opval);
         break;
     case ADDOP:
-        fprintf(stderr, "[ADDOP:%d]\n", t->attribute.opval);
+        fprintf(stderr, "[ADDOP:%d]\n", tree->attribute.opval);
         break;
     case RELOP:
-        fprintf(stderr, "[RELOP:%d]\n", t->attribute.opval);
+        fprintf(stderr, "[RELOP:%d]\n", tree->attribute.opval);
         break;
     case INUM:
-        fprintf(stderr, "[INUM:%i]\n", t->attribute.ival);
+        fprintf(stderr, "[INUM:%i]\n", tree->attribute.ival);
         break;
     case RNUM:
-        fprintf(stderr, "[RNUM:%f]\n", t->attribute.rval);
+        fprintf(stderr, "[RNUM:%f]\n", tree->attribute.rval);
         break;
-    case FUNCTION_CALL:
-    case ARRAY_ACCESS:
-    case COMMA:
-    case IF:
-    case THEN:
-    case WHILE:
-    case ELSE:
+    case FUNCTION:
+        fprintf(stderr, "[FUNCTION:%s]", tree->attribute.sval);
+        break;
+
 
     default:
         yyerror("Error in tree_print");
     }
 
-    aux_tree_print(t->left, spaces + 4);
-    aux_tree_print(t->right, spaces + 4);
+    aux_tree_print(tree->left, spaces + 4);
+    aux_tree_print(tree->right, spaces + 4);
 }
