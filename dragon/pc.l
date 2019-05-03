@@ -10,10 +10,15 @@
 number      [0-9]+
 whitespace  [ \t]+
 ident       [A-Za-z][A-Za-z0-9]*
+comment     \{[^{]*\}
+comment2    \(\*.*\*\)
 
 %%
 
 {whitespace}    ;
+
+{comment}   { fprintf(stderr, "Comment"); }
+{comment2}  { fprintf(stderr, "Comment"); }
 
 "program"   { fprintf(stderr, "[PROGRAM]"); return PROGRAM; }
 "var"       { fprintf(stderr, "[VAR]"); return VAR; }
@@ -53,7 +58,7 @@ ident       [A-Za-z][A-Za-z0-9]*
 "not"       { fprintf(stderr, "[NOT:%d]" , NOT); return NOT; }
 
 {number}    { fprintf(stderr, "[INUM:%d]", yylval.ival = atoi(yytext)); return INUM; }
-{number}"."{number} { fprintf(stderr, "[RNUM:%d]", yylval.rval = atof(yytext)); return RNUM; }
+{number}"."{number}  { fprintf(stderr, "[RNUM:%f]", yylval.rval = atof(yytext)); return RNUM; }
 
 {ident}     { fprintf(stderr,"[ID:%s]", yylval.sval = strdup(yytext)); return ID; }
 

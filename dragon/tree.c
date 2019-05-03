@@ -56,6 +56,28 @@ tree_t *mkop(int type, int op, tree_t *left, tree_t *right)
 
 //  have to add mkfor
 /* mkfor mkarray mkprog mksubprog */
+tree_t *mkfor(tree_t assignop, tree_t bleh)
+{
+    tree_t *bottom;
+    tree_t *top;
+
+    return top;
+}
+
+tree_t *mkarray()
+{
+
+}
+
+tree_t *mkprog()
+{
+
+}
+
+tree_t *mksubprog()
+{
+
+}
 
 /*auiliary */
 int tree_eval(tree_t *t)
@@ -85,6 +107,7 @@ int tree_eval(tree_t *t)
         exit(1);
     }
 }
+         
 
 void tree_print(tree_t *t)
 {
@@ -104,7 +127,7 @@ void aux_tree_print(tree_t *tree, int spaces)
     switch (tree->type)
     {
     case ID:
-        fprintf(stderr, "[ID:%s]\n", tree->attribute.sval);
+        fprintf(stderr, "[ID:%s]\n", tree->attribute.sval->name);
         break;
     case MULOP:
         fprintf(stderr, "[MULOP:%d]\n", tree->attribute.opval);
@@ -116,17 +139,80 @@ void aux_tree_print(tree_t *tree, int spaces)
         fprintf(stderr, "[RELOP:%d]\n", tree->attribute.opval);
         break;
     case INUM:
-        fprintf(stderr, "[INUM:%i]\n", tree->attribute.ival);
+        fprintf(stderr, "[INUM:%d]\n", tree->attribute.ival);
         break;
     case RNUM:
         fprintf(stderr, "[RNUM:%f]\n", tree->attribute.rval);
         break;
     case FUNCTION:
-        fprintf(stderr, "[FUNCTION:%s]", tree->attribute.sval);
+        fprintf(stderr, "[FUNCTION]");
+        break;
+    case PROGRAM:
+        fprintf(stderr, "[PROGRAM]");
+        break;
+    case VAR:
+        fprintf(stderr, "[VAR]");
+        break;
+    case ARRAY:
+        fprintf(stderr, "[ARRAY]");
+        break;
+    case OF:
+        fprintf(stderr, "[OF]");
+        break;
+    case PROCEDURE:
+        fprintf(stderr, "[PROCEDURE]");
+        break;
+    case BBEGIN:
+        fprintf(stderr, "[BEGIN]");
+        break;
+    case END:
+        fprintf(stderr, "[END]");
+        break;
+    case INTEGER:
+        fprintf(stderr, "[INTEGER]");
+        break;
+    case REAL:
+        fprintf(stderr, "[REAL]");
+        break;
+    case IF:
+        fprintf(stderr, "[IF]");
+        break;
+    case THEN:
+        fprintf(stderr, "[THEN]");
+        break;
+    case ELSE:
+        fprintf(stderr, "[ELSE]");
+        break;
+    case WHILE:
+        fprintf(stderr, "[WHILE]");
+        break;
+    case DO:
+        fprintf(stderr, "[DO]");
+        break;
+    case NOT:
+        fprintf(stderr, "[NOT]");
+        break;
+    case DOTDOT:
+        fprintf(stderr, "[DOTDOT]");
+        break;
+    case ASSIGNOP:
+        fprintf(stderr, "[ASSIGNOP]");
+        break;
+    case ARRAY_ACCESS:
+        fprintf(stderr, "[ARRAY_ACCESS]");
+        break;
+    case SLASH:
+        fprintf(stderr, "[/]");
+        break;
+    case FUNCTION_CALL:
+        fprintf(stderr, "[FUNCTION_CALL]");
+        break;
+    case PROCEDURE_CALL:
+        fprintf(stderr, "[PROCEDURE_CALL]");
         break;
 
-
     default:
+        fprintf(stderr, "Error Type: %d", tree->type);
         yyerror("Error in tree_print");
     }
 

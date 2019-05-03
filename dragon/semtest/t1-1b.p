@@ -1,4 +1,3 @@
-(* ERROR: variable redeclared *)
 program main( input, output );
   var a: integer;
 

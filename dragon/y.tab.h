@@ -57,30 +57,34 @@ extern int yydebug;
     REAL = 267,
     DOTDOT = 268,
     NOT = 269,
-    ASSIGNOP = 270,
+    COMMA = 270,
     ID = 271,
     INUM = 272,
     RNUM = 273,
-    RELOP = 274,
-    EQ = 275,
-    NE = 276,
-    LT = 277,
-    LE = 278,
-    GT = 279,
-    GE = 280,
-    ADDOP = 281,
-    PLUS = 282,
-    MINUS = 283,
-    OR = 284,
-    MULOP = 285,
-    STAR = 286,
-    SLASH = 287,
-    AND = 288,
-    IF = 289,
-    THEN = 290,
-    ELSE = 291,
-    WHILE = 292,
-    DO = 293
+    ASSIGNOP = 274,
+    RELOP = 275,
+    EQ = 276,
+    NE = 277,
+    LT = 278,
+    LE = 279,
+    GT = 280,
+    GE = 281,
+    ADDOP = 282,
+    PLUS = 283,
+    MINUS = 284,
+    OR = 285,
+    MULOP = 286,
+    STAR = 287,
+    SLASH = 288,
+    AND = 289,
+    IF = 290,
+    THEN = 291,
+    ELSE = 292,
+    WHILE = 293,
+    DO = 294,
+    ARRAY_ACCESS = 295,
+    FUNCTION_CALL = 296,
+    PROCEDURE_CALL = 297
   };
 #endif
 /* Tokens.  */
@@ -96,44 +100,52 @@ extern int yydebug;
 #define REAL 267
 #define DOTDOT 268
 #define NOT 269
-#define ASSIGNOP 270
+#define COMMA 270
 #define ID 271
 #define INUM 272
 #define RNUM 273
-#define RELOP 274
-#define EQ 275
-#define NE 276
-#define LT 277
-#define LE 278
-#define GT 279
-#define GE 280
-#define ADDOP 281
-#define PLUS 282
-#define MINUS 283
-#define OR 284
-#define MULOP 285
-#define STAR 286
-#define SLASH 287
-#define AND 288
-#define IF 289
-#define THEN 290
-#define ELSE 291
-#define WHILE 292
-#define DO 293
+#define ASSIGNOP 274
+#define RELOP 275
+#define EQ 276
+#define NE 277
+#define LT 278
+#define LE 279
+#define GT 280
+#define GE 281
+#define ADDOP 282
+#define PLUS 283
+#define MINUS 284
+#define OR 285
+#define MULOP 286
+#define STAR 287
+#define SLASH 288
+#define AND 289
+#define IF 290
+#define THEN 291
+#define ELSE 292
+#define WHILE 293
+#define DO 294
+#define ARRAY_ACCESS 295
+#define FUNCTION_CALL 296
+#define PROCEDURE_CALL 297
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 12 "pc.y" /* yacc.c:1909  */
+#line 15 "pc.y" /* yacc.c:1909  */
 
     int ival;   /* INUM */
     float rval; /* RNUM */
-    int opval;  /* RELOP ADDOP MULOP */
+    int opval;  /* RELOP ADDOP MULOP */     /*value relevant b/w parser and scanner */
     char *sval; /*ID */
+    /**********************************/
 
-#line 137 "y.tab.h" /* yacc.c:1909  */
+    
+    tree_t *tval; /* tree struct */         /* syntax tree */
+
+#line 149 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

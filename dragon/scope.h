@@ -9,7 +9,7 @@
 
 typedef struct scope_s {
     node_t *table[HASH_SIZE];
-    struct hash_s *next;
+    struct scope_s *next;
 } scope_t;
 
 /* constructor */
