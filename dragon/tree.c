@@ -56,61 +56,47 @@ tree_t *mkop(int type, int op, tree_t *left, tree_t *right)
 
 //  have to add mkfor
 /* mkfor mkarray mkprog mksubprog */
-tree_t *mkfor(tree_t assignop, tree_t bleh)
-{
-    tree_t *bottom;
-    tree_t *top;
 
-    return top;
+tree_t *mkarray(int type, int leftnum, int rightnum)
+{
+    tree_t *left = mkinum(leftnum);
+    tree_t *right = mkinum(rightnum);
+    tree_t *arr = mktree(type,left,right);
+    return arr;
 }
 
-tree_t *mkarray()
+/* syntax tree to pring out the program */
+tree_t *mkprog(int type, node_t *name, tree_t *idlist, tree_t *declare, tree_t *subdeclare, tree_t *compstmt)
 {
+    tree_t *progName = mkid(name);
+    
+    tree_t *bottom = mktree(type, subdeclare, compstmt);
+    tree_t *next = mktree(type, declare, bottom);
+    tree_t *upper = mktree(type, idlist, next);
+    
+    tree_t *prog = mktree(type, progName, upper);
+
+    return prog;
 
 }
 
-tree_t *mkprog()
+/* syntax tree to print out the sub program */
+tree_t *mksubprog(int type, tree_t *head, tree_t *decl, tree_t *compstmt)
 {
-
+    tree_t *first = mktree(type, decl, compstmt);
+    tree_t *second = mktree(type, head, first);
+    return second;
 }
 
-tree_t *mksubprog()
-{
 
-}
+
 
 /*auiliary */
-int tree_eval(tree_t *t)
-{
-    assert(t != NULL);
 
-    switch (t->type)
-    {
-    case '+':
-        return tree_eval(t->left) + tree_eval(t->right);
-    case '-':
-        if (t->right != NULL)
-            return tree_eval(t->left) - tree_eval(t->right);
-        else
-            return -tree_eval(t->left);
-    case '*':
-        return tree_eval(t->left) * tree_eval(t->right);
-    case '/':
-        return tree_eval(t->left) / tree_eval(t->right);
-    case INUM:
-        return t->attribute.ival;
-    case RNUM:
-        return t->attribute.rval;
-    
-    default:
-        fprintf(stderr, "Tree Eval: unknown type %d\n", t->type);
-        exit(1);
-    }
-}
-         
 
 void tree_print(tree_t *t)
 {
+    printf("\n\n\n\n");
     aux_tree_print(t, 0);
 }
 
@@ -210,7 +196,9 @@ void aux_tree_print(tree_t *tree, int spaces)
     case PROCEDURE_CALL:
         fprintf(stderr, "[PROCEDURE_CALL]");
         break;
-
+    case COMMA:
+        fprintf(stderr, ",");
+        break;
     default:
         fprintf(stderr, "Error Type: %d", tree->type);
         yyerror("Error in tree_print");

@@ -21,6 +21,12 @@ scope_t *mkscope()
 
 void *free_scope(scope_t *top )
 {
+    scope_t *tmp = top->next;
+    top->next = NULL;
+    for(int i = 0; i < sizeof(top->table); i++)
+    {
+        top->table[i] = 0;
+    }
 
 }
 
