@@ -84,7 +84,8 @@ extern int yydebug;
     DO = 294,
     ARRAY_ACCESS = 295,
     FUNCTION_CALL = 296,
-    PROCEDURE_CALL = 297
+    PROCEDURE_CALL = 297,
+    PARAMLIST = 298
   };
 #endif
 /* Tokens.  */
@@ -128,13 +129,14 @@ extern int yydebug;
 #define ARRAY_ACCESS 295
 #define FUNCTION_CALL 296
 #define PROCEDURE_CALL 297
+#define PARAMLIST 298
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 16 "pc.y" /* yacc.c:1909  */
+#line 19 "pc.y" /* yacc.c:1909  */
 
     int ival;   /* INUM */
     float rval; /* RNUM */
@@ -145,7 +147,7 @@ union YYSTYPE
     
     tree_t *tval; /* tree struct */         /* syntax tree */
 
-#line 149 "y.tab.h" /* yacc.c:1909  */
+#line 151 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

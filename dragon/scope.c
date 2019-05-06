@@ -21,13 +21,9 @@ scope_t *mkscope()
 
 void *free_scope(scope_t *top )
 {
-    scope_t *tmp = top->next;
-    top->next = NULL;
-    for(int i = 0; i < sizeof(top->table); i++)
-    {
-        top->table[i] = 0;
-    }
-
+    assert(top != NULL);
+    //free(top->table);
+    free(top);   
 }
 
 /* stack routines */
@@ -75,7 +71,14 @@ node_t *scope_insert( scope_t *top, char *name )
     node_t *tmp = top->table[index];
     top->table[index] = node_insert(tmp,name);
     return top->table[index];
+}
 
+node_t *scope_insert_func( scope_t *top, char *name, int type, int args, arglist_t *arglist)
+{
+    int index = hashpjw(name);
+    node_t *tmp = top->table[index];
+    top->table[index] = node_insert_func(arglist,tmp,name,type,args);
+    return top->table[index];
 }
 
 /* indcluded in here the Peter J. Weinberger hash function */

@@ -28,6 +28,6 @@ semantic checking and code generation
 
 HINTS
 ------------
-Go down the semantic checklist
- - Checklist test files on polaris
- -
+Insert into mknode the return type
+    - In nodes make sure there is a return type, if 0 then no return type (can we double this as soemthing)
+    -

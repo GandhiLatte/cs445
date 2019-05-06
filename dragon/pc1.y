@@ -5,7 +5,6 @@
 #include "node.h"
 #include "tree.h"
 #include "scope.h"
-#include "semantics.h"
 #include "y.tab.h"    
 
 extern int yylex();
@@ -57,14 +56,12 @@ extern void leave();
 %token  FUNCTION_CALL
 %token  PROCEDURE_CALL
 
-%token  PARAMLIST
-
 /* %token  SUBPROGRAM
 %token  IDLIST
 %token  DECLARATION
 %token  TYPES
 %token  ARGS
-
+%token  PARAMLIST
 %token  COMPSTMT
 %token  OPTSTMT
 %token  STMTLIST
@@ -94,11 +91,9 @@ extern void leave();
 %type <tval>    factor
  
 %type <tval>    declarations
-%type <tval>    parameter_list
-%type <tval>    arguments
 %type <tval>    subprogram_declarations
 %type <tval>    subprogram_declaration  
-%type <tval>    subprogram_head
+//%type <tval>    subprogram_head
 
 
 
@@ -145,8 +140,7 @@ identifier_list: ID
 declarations: declarations VAR identifier_list ':' type ';'
         { /* add_type_information($3,$5); */
             // this is where we are going to add type addressing
-            //$$ = mktree(VAR, $1, $3);
-
+            $$ = mktree(VAR, $1, $3);
         }
     | /*empty*/
         { $$ = NULL; }
@@ -180,74 +174,46 @@ subprogram_declarations: subprogram_declarations subprogram_declaration ';'
 subprogram_declaration: subprogram_head declarations compound_statement
     {
         //$$ = mksubprog(PROGRAM,$1,$2,$3);
-        scope_t *tmp = top_scope;
-        top_scope = pop_scope(tmp);
         $$ = NULL;  
     }
     ;
 
 /* either a function of a procedure */
-subprogram_head: FUNCTION ID
-    {
-        scope_insert(top_scope,$2);
-        scope_t *tmp = top_scope;
-        top_scope = push_scope(tmp);
-    } 
+subprogram_head: FUNCTION ID 
+
     arguments ':' standard_type ';'
-    {
-        // how to enter in the types and the other stuff to thing in a scope that we can't see.
-        // could just go next scope and look at that.
-        //top_scope -> next?
-        //tmp scope = top_scope->next;
-        //
-        arglist_t *args;
-        //args = argtypes($3);
-        $$ = NULL;
-    }
-    | PROCEDURE ID 
+
+    | PROCEDURE ID
     {
         scope_t *tmp = top_scope;
         top_scope = push_scope(tmp);
     }
     arguments ';'
-    {
-        $$ = NULL;
-    }
     ;
 
 arguments:'(' parameter_list ')'
-    {
-        $$ = $2;
-    }
     | /* empty */
-    {
-        $$ = NULL;
-    }
     ;
 
 parameter_list: identifier_list ':' type
-    {
-        $$ = $1;
-    }
     | parameter_list ';' identifier_list ':' type
-    {
-        $$ = mktree(PARAMLIST,$1,$3);
-    }
     ;
 
 compound_statement: BBEGIN optional_statements END
-        {
-            $$ = $2; }
+        { $$ = $2; }
     ;
 
 optional_statements: statement_list
     { 
         // if there is then we must go deeper    
         $$ = $1;
+
     }
     | /*empty */ 
     { 
         // if there is nothing b/w begin and end then just pop
+        scope_t *tmp = top_scope;
+        top_scope = pop_scope(tmp);
         $$ = NULL;
     }
     ;
@@ -255,6 +221,8 @@ optional_statements: statement_list
 statement_list: statement 
     {
         $$ = $1;
+        scope_t *tmp = top_scope;
+        top_scope = pop_scope(tmp);
     }
     | statement_list ';' statement { $$ = mktree(COMMA,$1,$3); }
     ;
@@ -305,34 +273,10 @@ expression_list: expression { $$ = $1; }
     | expression_list ',' expression { $$ = mktree(COMMA,$1,$3); }
     ;
 
-expression: simple_expression 
-    {
-        int type;
-        tree_t *tmp = $1;
-        type = typechecker(tmp);
-        if(type == 0)
-        {
-            yyerror("Mismatched Type in Simple Expression");
-            exit(1);
-        } else{
-            tmp->type = type;
-            $$ = tmp; 
-        }
-
-    }
+expression: simple_expression { $$ = $1; }
     | simple_expression RELOP simple_expression 
     {
-        if(typechecker($1) == 0 || typechecker($3) == 0)
-        {
-            yyerror("Mismatched Type in Simple Expression");
-        }
-        if(typechecker($1) == typechecker($3))
-        {
-            $$ = mkop(RELOP,$2,$1,$3);
-        } else
-        {
-            yyerror("Mismatched Types at relation");
-        }
+        $$ = mkop(RELOP,$2,$1,$3);
     }
     ;
 
