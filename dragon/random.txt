@@ -1,0 +1,42 @@
+Outdated Code
+
+//semantics 2.2
+/* Might need to change this later
+    Hunter was saying for functions we can't have global variables inside
+        But for procedures we should be able to.
+    Might just need a specialized search, same thing but just local search */
+node_t *scope_search_expr(scope_t *top_scope, tree_t *tree) 
+{
+    node_t *left;
+    node_t *right;
+    assert(tree != NULL);
+    //return found node if at the bottom of the tree
+    if ((tree->left == NULL) && (tree->right == NULL))
+    {
+        //this might not be right, tree->attribute.sval is already a node?!
+        printf("%s", tree->attribute.sval->name);
+        return scope_search_all(top_scope,tree->attribute.sval->name);
+    }
+    else if (tree->left == NULL || tree->right == NULL)// not at leaf
+        
+        if (tree->left == NULL)//if left tree empty search right tree
+        {
+            return scope_search_expr(top_scope,tree->right); // search right tree
+        }
+        else
+        {
+            return scope_search_expr(top_scope,tree->left);// else search left tree
+        }
+    else // both not empty
+    {
+        left = scope_search_expr(top_scope,tree->left); // search left tree
+        right = scope_search_expr(top_scope,tree->right); // search right tree
+        if(left == NULL || right == NULL) // either of these NULL
+        {
+            return NULL; // return NULL
+        } else {
+            return left; // else just return left
+        }
+
+    }
+}

@@ -4,6 +4,7 @@
 typedef struct arglist_s
 {
     int type;
+    int num;
     struct arglist_s *next;
 } arglist_t;
 

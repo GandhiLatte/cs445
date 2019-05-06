@@ -23,7 +23,7 @@ extern void leave();
     char *sval; /*ID */
     /**********************************/
 
-    
+    arglist_t *aval;    
     tree_t *tval; /* tree struct */         /* syntax tree */
 }
 
@@ -65,7 +65,7 @@ extern void leave();
 %token  TYPES
 %token  ARGS
 
-%token  COMPSTMT
+%token  COMPSTMT%type <aval>   
 %token  OPTSTMT
 %token  STMTLIST
 %token  STM
@@ -85,8 +85,7 @@ extern void leave();
 %type <tval>    variable
 %type <tval>    procedure_statement
 %type <tval>    identifier_list
-%type <tval>    type    
-
+//%type <tval>    type       
 %type <tval>    expression
 %type <tval>    expression_list
 %type <tval>    simple_expression
@@ -94,11 +93,14 @@ extern void leave();
 %type <tval>    factor
  
 %type <tval>    declarations
-%type <tval>    parameter_list
-%type <tval>    arguments
+%type <aval>    parameter_list
+%type <aval>    arguments
 %type <tval>    subprogram_declarations
 %type <tval>    subprogram_declaration  
 %type <tval>    subprogram_head
+%type <tval>    standard_type
+%type <tval>    type
+ 
 
 
 
@@ -153,16 +155,28 @@ declarations: declarations VAR identifier_list ':' type ';'
     ;
 
 type: standard_type
-      { $$ = NULL; }
+      { $$ = $1; }
     | ARRAY '[' INUM DOTDOT INUM ']' OF standard_type
       { 
         //makes an tree with array as ID and left and right bounds as leafs
-        $$ = mkarray(ARRAY,$3,$5); 
+        //probably should add 4th argument to array to accept type*
+        int type;
+        tree_t *st = $8;
+        type = st->type;
+        // arrays have two inums on the bottom left
+        tree_t *tree = mkarray(type,$3,$5); 
+        $$ = tree;
       }
     ;
     
 standard_type: INTEGER
+    {
+        $$ = mktree(INUM,NULL,NULL);
+    }
     | REAL
+    {
+        $$ = mktree(RNUM,NULL,NULL);
+    }
     ;
 
 subprogram_declarations: subprogram_declarations subprogram_declaration ';'
@@ -180,6 +194,23 @@ subprogram_declarations: subprogram_declarations subprogram_declaration ';'
 subprogram_declaration: subprogram_head declarations compound_statement
     {
         //$$ = mksubprog(PROGRAM,$1,$2,$3);
+        tree_t *t = $1;
+        if(t->type = FUNCTION)
+        {
+
+        }
+        else if(t->type = PROCEDURE)
+        {
+
+        }
+        else {
+            yyerror("Error in Suprogram Head");
+        }
+
+
+
+
+
         scope_t *tmp = top_scope;
         top_scope = pop_scope(tmp);
         $$ = NULL;  
@@ -189,7 +220,7 @@ subprogram_declaration: subprogram_head declarations compound_statement
 /* either a function of a procedure */
 subprogram_head: FUNCTION ID
     {
-        scope_insert(top_scope,$2);
+        mkid(scope_insert(top_scope,$2));
         scope_t *tmp = top_scope;
         top_scope = push_scope(tmp);
     } 
@@ -200,21 +231,28 @@ subprogram_head: FUNCTION ID
         //top_scope -> next?
         //tmp scope = top_scope->next;
         //
-        arglist_t *args;
-        //args = argtypes($3);
-        $$ = NULL;
+        tree_t *tree = $6;
+        int type = tree->type; 
+        arglist_t *args = $4;
+        int num = args->num;
+        //scope_insert_func(top_scope,$2,type,num,args)
+        $$ = mktree(FUNCTION, NULL, NULL);
     }
     | PROCEDURE ID 
     {
+        mkid(scope_insert(top_scope,$2));
         scope_t *tmp = top_scope;
         top_scope = push_scope(tmp);
     }
     arguments ';'
     {
-        $$ = NULL;
+        //argumetns is returning arglist_t
+        $$ = mktree(PROCEDURE, NULL,NULL);
     }
     ;
 
+
+/* return arglist type */
 arguments:'(' parameter_list ')'
     {
         $$ = $2;
@@ -225,19 +263,22 @@ arguments:'(' parameter_list ')'
     }
     ;
 
+/* returning a arglist type */
 parameter_list: identifier_list ':' type
     {
-        $$ = $1;
+        mkarglist($1,$3);
     }
     | parameter_list ';' identifier_list ':' type
     {
-        $$ = mktree(PARAMLIST,$1,$3);
+        $$ = mergelist($1,mkarglist($3,$5))
     }
     ;
 
 compound_statement: BBEGIN optional_statements END
         {
-            $$ = $2; }
+            $$ = $2;
+        }
+
     ;
 
 optional_statements: statement_list
@@ -293,12 +334,20 @@ variable: ID
             yyerror("Array ID not found");
             exit(1);
         }
+        if(typechecker($3) != INUM)
+        {
+            yyerror("Array Access expression not an integer");
+            exit(1);
+        }
         $$ = mktree(ARRAY_ACCESS,mkid(tmp), $3);
     }
     ;
 
 procedure_statement: ID { $$ = mkid(scope_search_all(top_scope,$1));}
-    | ID '(' expression_list ')' { $$ = mktree(PROCEDURE_CALL,mkid(scope_search_all(top_scope,$1)),$3);}
+    | ID '(' expression_list ')' 
+    {
+        $$ = mktree(PROCEDURE_CALL,mkid(scope_search_all(top_scope,$1)),$3);
+    }
     ;
 
 expression_list: expression { $$ = $1; }
@@ -314,7 +363,11 @@ expression: simple_expression
         {
             yyerror("Mismatched Type in Simple Expression");
             exit(1);
-        } else{
+        } /* else if(scope_search_expr(top_scope,tmp) == NULL)
+        {
+            yyerror("Non-declared var in expression");
+            exit(1);
+        } */ else{
             tmp->type = type;
             $$ = tmp; 
         }
@@ -345,9 +398,33 @@ term: factor { $$ = $1; }
     | term MULOP factor { $$ = mkop(MULOP,$2,$1,$3); }
     ;
 
-factor: ID { $$ = mkid(scope_search_all(top_scope,$1));}
-    | ID '[' expression ']' { $$ = mktree(ARRAY_ACCESS,mkid(scope_search_all(top_scope,$1)),$3); }
-    | ID '(' expression_list ')' { $$ = mktree(FUNCTION_CALL,mkid(scope_search_all(top_scope,$1)),$3); }
+factor: ID
+    {
+        if(scope_search_all(top_scope,$1) == NULL)
+        {
+            yyerror("ID not declared in Expression");
+            exit(1);
+        }
+        $$ = mkid(scope_search_all(top_scope,$1));
+    }
+    | ID '[' expression ']' 
+    {  
+        if(scope_search_all(top_scope,$1) == NULL)
+        { 
+            yyerror("ID not declared for Array access");
+            exit(1);
+        }
+        $$ = mktree(ARRAY_ACCESS,mkid(scope_search_all(top_scope,$1)),$3); 
+    }
+    | ID '(' expression_list ')' 
+    {
+        if(scope_search_all(top_scope,$1) == NULL)
+        {
+            yyerror("ID not declared for Function Call");
+            exit(1);
+        }
+        $$ = mktree(FUNCTION_CALL,mkid(scope_search_all(top_scope,$1)),$3); 
+    }
     | INUM { $$ = mkinum($1); $$->attribute.ival = $1; }
     | RNUM { $$ = mkrnum($1); $$->attribute.rval = $1; }
     | '(' expression ')' { $$ = $2; }

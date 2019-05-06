@@ -4,7 +4,7 @@ program main( input, output );
   procedure boo(a: integer);
     var b: real;
   begin
-    b := 1.23 
+    b := 1.23
   end;
 begin
   boo(b)

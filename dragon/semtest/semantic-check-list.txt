@@ -14,7 +14,7 @@ Simple Semantic Rules for the Dragon Pascal subset (appendix A)
 2. Semantic rules for Expressions
    2.1. Expressions return typed-values
         create a type maker
-   2.2. Objects must be declared before they used in expressions
+   2.2. ObjeScts must be declared before they used in expressions
         create a checker that if a var is included in an expression that it was declared before.
    2.3. Objects of different types cannot appear in the same expression (no type promotions)
 
@@ -26,7 +26,7 @@ Simple Semantic Rules for the Dragon Pascal subset (appendix A)
    3.4. The variable type in FOR-DO must match the types of lower bound and upper bound expressions
 
 4. Semantic rules for Arrays
-   4.1. Non-integer valued expressions cannot be used for indexing arrays
+   4.1. Non-integer valzued expressions cannot be used for indexing arrays
 
 5. Semantic rules for Functions 
    5.1. Function calls return values of type Integer or Real
