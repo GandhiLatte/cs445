@@ -28,7 +28,7 @@ tree_t *mkid(node_t *);
 tree_t *mkinum(int);
 tree_t *mkrnum(float);
 tree_t *mkop(int, int, tree_t *, tree_t *);
-tree_t *mkarray(int, int, int);
+tree_t *mkarray(int, int, tree_t*);
 tree_t *mkprog(int, node_t *, tree_t *,tree_t *, tree_t *, tree_t *);
 tree_t *mkdecl(tree_t *, tree_t *, tree_t *);
 tree_t *mksubprog(int, tree_t *, tree_t *, tree_t*);

@@ -57,12 +57,11 @@ tree_t *mkop(int type, int op, tree_t *left, tree_t *right)
 //  have to add mkfor
 /* mkfor mkarray mkprog mksubprog */
 
-tree_t *mkarray(int type, int leftnum, int rightnum)
+tree_t *mkarray(int leftnum, int rightnum, tree_t *right)
 {
-    tree_t *left = mkinum(leftnum);
-    tree_t *right = mkinum(rightnum);
-    tree_t *arr = mktree(type,left,right);
-    return arr;
+    tree_t *bottom = mktree(BOUND,mkinum(leftnum),mkinum(rightnum));
+    tree_t *array = mktree(ARRAY,bottom,right);
+    return array;
 }
 
 /* syntax tree to pring out the program */

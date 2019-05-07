@@ -41,6 +41,8 @@ extern void leave();
 %token  <ival> INUM
 %token  <rval> RNUM
 
+%token  BOUND
+
 %token  ASSIGNOP
 
 %token  <opval> RELOP
@@ -169,12 +171,15 @@ type: standard_type
       { 
         //makes an tree with array as ID and left and right bounds as leafs
         //probably should add 4th argument to array to accept type*
-        int type;
+/*         int type;
         tree_t *st = $8;
         type = st->type;
         // arrays have two inums on the bottom left
         tree_t *tree = mkarray(type,$3,$5); 
-        $$ = tree;
+        $$ = tree; */
+
+
+        $$ = mkarray($3,$5,$8);
       }
     ;
     
@@ -200,22 +205,42 @@ subprogram_declarations: subprogram_declarations subprogram_declaration ';'
     ;
 
 /* deleted something here, anotehr thing of subprogram declarations */
-subprogram_declaration: subprogram_head declarations compound_statement
+subprogram_declaration: subprogram_head declarations subprogram_declarations compound_statement
     {
+        tree_t *cmp = $3;
         //$$ = mksubprog(PROGRAM,$1,$2,$3);
         tree_t *t = $1;
-        if(t->type = FUNCTION)
-        {
 
+        if(t->type == FUNCTION)
+        {   
+            tree_t *t = $1;
+            node_t *n = t->right->attribute.sval;
+            tree_t *ret_type = has_return(n,$3);
+            if(ret_type == NULL)
+            {
+                yyerror("No return found");
+                exit(1);
+            }
         }
-        else if(t->type = PROCEDURE)
+        else if(t->type == PROCEDURE)
         {
+   
+            if(cmp != NULL)
+            {
+                tree_t *t = $1;
+                node_t *n = t->right->attribute.sval;
+                tree_t *ret_type = has_return(n,$3);
+                if( ret_type != NULL)
+                {
+                    yyerror("Return found in Procedure");
+                }
+            }
 
         }
         else {
             yyerror("Error in Suprogram Head");
+            exit(1);
         }
-
         scope_t *tmp = top_scope;
         top_scope = pop_scope(tmp);
         $$ = NULL;  
@@ -239,16 +264,27 @@ subprogram_head: FUNCTION ID
         // how to enter in the types and the other stuff to thing in a scope that we can't see.
         // could just go next scope and look at that.
         //
-        
+        int num;
         arglist_t *args = $4;
-        int num = args->num;
+        if(!args)
+        {
+            num = 0;
+        }
+        else 
+        {
+            num = args->num;    
+        }
         tree_t *type_tree = $6;
         int type = type_tree->type;
 
-        scope_insert_func(top_scope->next,$2,type,num,args);
+        scope_t *ts = top_scope;
+
+        node_t *node = scope_insert_func(top_scope->next,$2,type,num,args);
+
+        top_scope = ts;
 
 
-        $$ = mktree(FUNCTION, NULL, NULL);
+        $$ = mktree(FUNCTION, NULL, mkid(node));
     }
     | PROCEDURE ID 
     {
@@ -256,12 +292,30 @@ subprogram_head: FUNCTION ID
         {
             yyerror("Variable Redclared (Procedure)");
             exit(1);
-        }
+        } 
         mkid(scope_insert(top_scope,$2));
         scope_t *tmp = top_scope;
         top_scope = push_scope(tmp);
+
         //argumetns is returning arglist_t
-        $$ = mktree(PROCEDURE, NULL,NULL);
+        
+    } arguments ';'
+    {
+        int num;
+        arglist_t *args = $4;
+        if(args == NULL)
+        {
+            num = 0;
+        } else {
+            num = args->num;
+        }
+        
+
+        scope_t *tmps = top_scope;
+        node_t *node = scope_insert_proc(top_scope->next,$2,num,args);
+        top_scope = tmps;
+
+        $$ = mktree(PROCEDURE, NULL,mkid(node));
     }
     ;
 
@@ -321,6 +375,7 @@ statement: variable ASSIGNOP expression
         
         if(vartype->id_type != typechecker($3))
         {
+            
             yyerror("Mismatched Types in ASSIGNOP");
             exit(1);
         }
@@ -449,7 +504,7 @@ factor: ID
         { 
             yyerror("ID not declared for Array access");
             exit(1);
-        }
+        } 
         $$ = mktree(ARRAY_ACCESS,mkid(scope_search_all(top_scope,$1)),$3); 
     }
     | ID '(' expression_list ')' 
@@ -464,12 +519,6 @@ factor: ID
             yyerror("Type mismatch in function call argmuments");
             exit(1);
         }
-        // we have our expr list data 
-
-        // call create arglist  from expr list
-
-        //compare expr list to func id expected list
-
 
         if(scope_search_all(top_scope,$1) == NULL)
         {

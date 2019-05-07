@@ -61,35 +61,36 @@ extern int yydebug;
     ID = 271,
     INUM = 272,
     RNUM = 273,
-    ASSIGNOP = 274,
-    RELOP = 275,
-    EQ = 276,
-    NE = 277,
-    LT = 278,
-    LE = 279,
-    GT = 280,
-    GE = 281,
-    ADDOP = 282,
-    PLUS = 283,
-    MINUS = 284,
-    OR = 285,
-    MULOP = 286,
-    STAR = 287,
-    SLASH = 288,
-    AND = 289,
-    EXP = 290,
-    CARROT = 291,
-    IF = 292,
-    THEN = 293,
-    ELSE = 294,
-    WHILE = 295,
-    DO = 296,
-    FOR = 297,
-    TO = 298,
-    ARRAY_ACCESS = 299,
-    FUNCTION_CALL = 300,
-    PROCEDURE_CALL = 301,
-    PARAMLIST = 302
+    BOUND = 274,
+    ASSIGNOP = 275,
+    RELOP = 276,
+    EQ = 277,
+    NE = 278,
+    LT = 279,
+    LE = 280,
+    GT = 281,
+    GE = 282,
+    ADDOP = 283,
+    PLUS = 284,
+    MINUS = 285,
+    OR = 286,
+    MULOP = 287,
+    STAR = 288,
+    SLASH = 289,
+    AND = 290,
+    EXP = 291,
+    CARROT = 292,
+    IF = 293,
+    THEN = 294,
+    ELSE = 295,
+    WHILE = 296,
+    DO = 297,
+    FOR = 298,
+    TO = 299,
+    ARRAY_ACCESS = 300,
+    FUNCTION_CALL = 301,
+    PROCEDURE_CALL = 302,
+    PARAMLIST = 303
   };
 #endif
 /* Tokens.  */
@@ -109,35 +110,36 @@ extern int yydebug;
 #define ID 271
 #define INUM 272
 #define RNUM 273
-#define ASSIGNOP 274
-#define RELOP 275
-#define EQ 276
-#define NE 277
-#define LT 278
-#define LE 279
-#define GT 280
-#define GE 281
-#define ADDOP 282
-#define PLUS 283
-#define MINUS 284
-#define OR 285
-#define MULOP 286
-#define STAR 287
-#define SLASH 288
-#define AND 289
-#define EXP 290
-#define CARROT 291
-#define IF 292
-#define THEN 293
-#define ELSE 294
-#define WHILE 295
-#define DO 296
-#define FOR 297
-#define TO 298
-#define ARRAY_ACCESS 299
-#define FUNCTION_CALL 300
-#define PROCEDURE_CALL 301
-#define PARAMLIST 302
+#define BOUND 274
+#define ASSIGNOP 275
+#define RELOP 276
+#define EQ 277
+#define NE 278
+#define LT 279
+#define LE 280
+#define GT 281
+#define GE 282
+#define ADDOP 283
+#define PLUS 284
+#define MINUS 285
+#define OR 286
+#define MULOP 287
+#define STAR 288
+#define SLASH 289
+#define AND 290
+#define EXP 291
+#define CARROT 292
+#define IF 293
+#define THEN 294
+#define ELSE 295
+#define WHILE 296
+#define DO 297
+#define FOR 298
+#define TO 299
+#define ARRAY_ACCESS 300
+#define FUNCTION_CALL 301
+#define PROCEDURE_CALL 302
+#define PARAMLIST 303
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -155,7 +157,7 @@ union YYSTYPE
     arglist_t *aval;    
     tree_t *tval; /* tree struct */         /* syntax tree */
 
-#line 159 "y.tab.h" /* yacc.c:1909  */
+#line 161 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -29,4 +29,6 @@ node_t *scope_search( scope_t *, char * );
 node_t *scope_insert( scope_t *, char * );
 node_t *edit_scope_id( scope_t *, char *, int);
 node_t *scope_insert_func( scope_t *, char *, int, int, arglist_t *);
+node_t *scope_insert_proc( scope_t *, char *, int, arglist_t *);
+node_t *edit_scope_array(scope_t *, char *, int);
 #endif

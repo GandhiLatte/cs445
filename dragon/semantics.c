@@ -17,10 +17,11 @@ int typechecker(tree_t *tree)
     //compare type of bottom node to all the way through
     if ((tree->left == NULL) && (tree->right == NULL))
     {
-        if(tree->type == ID)
+        if (tree->type == ID)
         {
             return tree->attribute.sval->id_type;
-        } else
+        }
+        else
         {
             return tree->type;
         }
@@ -36,34 +37,31 @@ int typechecker(tree_t *tree)
         }
     else
     {
-        left = typechecker(tree->left);
-        right = typechecker(tree->right);
-        if (left == right)
+        if (tree->type == ARRAY) // maybe the solution
         {
-            return left;
+            return typechecker(tree->right);
         }
         else
         {
-            return 0;
+            left = typechecker(tree->left);
+            right = typechecker(tree->right);
+            if (left == right)
+            {
+                return left;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }
 
-tree_t *getReturnType(tree_t *tree)
-{
-    if (tree == NULL)
-    {
-        return NULL;
-    }
-
-    return NULL;
-}
 
 arglist_t *mkarglist(tree_t *params, tree_t *argt)
 {
     int i;
     int numargs = 0;
-
 
     arglist_t *args = (arglist_t *)malloc(sizeof(arglist_t));
     assert(params != NULL);
@@ -133,16 +131,49 @@ arglist_t *merge_list(arglist_t *first, arglist_t *last)
 }
 
 //function return
-node_t *has_return(tree_t *func)
+tree_t *has_return(node_t *head, tree_t *body)
 {
-    if (func == NULL)
+    if(body->right == NULL && body->left == NULL)
     {
-        return NULL;
-    }
-    else
+        if(body->type == ID)
+        {
+            if(strcmp(head->name,body->attribute.sval->name) != 0)
+            {
+                return body;
+            } else
+            {
+                return NULL;
+            }
+        } else
+        {
+            return NULL;
+        }
+    } else if(body->right == NULL || body->left == NULL)
     {
-        /* code */
+        if(body->right == NULL)
+        {
+            return has_return(head,body->left);
+        } else {
+            return has_return(head,body->right);
+        }
+    } else
+    {
+        tree_t *left = has_return(head,body->left);
+        tree_t *right = has_return(head,body->right);
+        if(left == NULL && right == NULL)
+        {
+            return NULL;
+        } else {
+            if(left == NULL)
+            {
+                return right;
+            } else
+            {
+                return left;
+            }   
+        }
     }
+    
 }
 
 void add_typing(scope_t *topscope, tree_t *idlist, tree_t *typer)
@@ -151,22 +182,35 @@ void add_typing(scope_t *topscope, tree_t *idlist, tree_t *typer)
     tree_t *tmp;
 
     assert(idlist != NULL);
-    while(idlist != NULL)
+    while (idlist != NULL)
     {
         tmp = idlist->left;
-        if(idlist->left == NULL && idlist->right == NULL)
+        if (idlist->left == NULL && idlist->right == NULL)
         {
-            if(idlist->type == ID)
+            if (idlist->type == ID)
             {
-                edit_scope_id(topscope,idlist->attribute.sval->name,type);
-            } else
-            {
-                printf("BIG ERROR NULL?!?!?!!");
+                edit_scope_id(topscope, idlist->attribute.sval->name, type);
             }
-        } else if(idlist->type == COMMA)
-        {
-            edit_scope_id(topscope,idlist->right->attribute.sval->name,type);
+            else if (idlist->type == ARRAY)
+            {
+            }
         }
+        else if (idlist->type == COMMA)
+        {
+            if(idlist->right->type == ARRAY)
+            {
+                edit_scope_array(topscope, idlist->right->right->attribute.sval->name,type);
+            } else {
+                edit_scope_id(topscope, idlist->right->attribute.sval->name, type);
+            }
+        } else if(idlist->type == ARRAY)
+        {
+            edit_scope_array(topscope, idlist->right->attribute.sval->name, type);
+        } else
+        {
+            printf("Done borked");
+        }
+        
         idlist = tmp;
     }
 }
@@ -180,39 +224,66 @@ arglist_t *list_from_expr(tree_t *expr)
     tree_t *tmp;
 
     assert(expr != NULL);
-    while(expr != NULL)
+    while (expr != NULL)
     {
         tmp_arg = argv;
         tmp = expr->left;
-        if(expr->left == NULL && expr->right == NULL)
+        if (expr->left == NULL && expr->right == NULL)
         {
             argv = add_type_list(typechecker(expr), tmp_arg);
-        } else if(expr->type == COMMA)
+        }
+        else if (expr->type == COMMA)
         {
             argv = add_type_list(typechecker(expr->right), tmp_arg);
-        } else
+        }
+        else
         {
-            fprintf(stderr,"Big broke");
+            fprintf(stderr, "Big broke");
         }
         expr = tmp;
     }
 }
 
-int compare_lists(arglist_t  *expr, arglist_t *func)
+int compare_lists(arglist_t *expr, arglist_t *func)
 {
-    
-    return 1;
+    if (expr->next == NULL && func->next == NULL)
+    {
+        if (expr->type == func->type)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if (expr->next == NULL && func->next != NULL)
+    {
+        return 0;
+    }
+    else if (expr->next != NULL && func->next == NULL)
+    {
+        return 0;
+    }
+    else if (expr->type == func->type)
+    {
+        return compare_lists(expr->next, func->next);
+    }
+    else
+    {
+        return 0;
+    }
 }
-
 
 arglist_t *add_type_list(int type, arglist_t *arg)
 {
     arglist_t *tmp;
-    if(arg->next == NULL)
+    if (arg->next == NULL)
     {
         arg->type = type;
         return arg;
-    } else 
+    }
+    else
     {
         tmp->next = arg;
         tmp->type = type;

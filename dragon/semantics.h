@@ -6,7 +6,6 @@
 #include "scope.h"
 
 int typechecker(tree_t *);
-tree_t *getReturnType(tree_t *);
 //node_t retnode();
 
 //function typing
@@ -19,6 +18,8 @@ int get_arg_num(tree_t *, int);
 void add_typing(scope_t*, tree_t*,tree_t*);
 arglist_t *merge_list(arglist_t *, arglist_t*);
 
+
+tree_t *has_return(node_t *, tree_t *);
 
 //function stuff
 arglist_t *list_from_expr(tree_t*);

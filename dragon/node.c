@@ -11,6 +11,7 @@ node_t *mknode(char *s)
     node_t *p = (node_t *)malloc(sizeof(node_t));
     assert(p != NULL);
     p->name = strdup(s);
+    p->_array = 0;
     p->next = NULL;
     return p;
 }
@@ -44,10 +45,26 @@ node_t *node_insert( node_t *top, char *name)
  */
 node_t *node_insert_func(arglist_t *arglist, node_t *top, int type, int args)
 {
-    top->arglist = arglist;
+    if(arglist != NULL)
+    {
+        top->arglist = arglist;
+    }
     top->numargs = args;
     top->return_type = type;
-    return NULL;
+    return top;
+}
+node_t *node_insert_proc(arglist_t *arglist, node_t *top, int args)
+{
+    if(arglist != NULL)
+    {
+        top->arglist = arglist;
+    } else
+    {
+        top->arglist = NULL;
+    }
+    top->numargs = args;
+    top->return_type = 0;
+    return top;
 }
 
 node_t *create_type( node_t *name, int type)
@@ -56,6 +73,12 @@ node_t *create_type( node_t *name, int type)
     return name;
 }
 
+node_t *create_array( node_t *name, int type)
+{
+    name->_array = 1;
+    name->id_type = type;
+    return name;
+}
 
 void node_print( node_t *top)
 {
