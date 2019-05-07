@@ -198,9 +198,10 @@ arglist_t *list_from_expr(tree_t *expr)
     }
 }
 
-int compare_lists(arglist_t  *left, arglist_t *right)
+int compare_lists(arglist_t  *expr, arglist_t *func)
 {
-    return 0;
+    
+    return 1;
 }
 
 
