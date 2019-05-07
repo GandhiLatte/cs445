@@ -35,7 +35,8 @@ comment2    \(\*.*\*\)
 "else"      { fprintf(stderr, "[ELSE]"); return ELSE; }
 "while"     { fprintf(stderr, "[WHILE]"); return WHILE; }
 "do"        { fprintf(stderr, "[DO]"); return DO; }
-
+"for"       { fprintf(stderr, "[FOR]"); return FOR; }
+"to"        { fprintf(stderr, "[TO]"); return TO; }
 ".."        { return DOTDOT; }
 
 ":="        { fprintf(stderr, "[ASSIGNOP]"); return ASSIGNOP; }
@@ -55,6 +56,8 @@ comment2    \(\*.*\*\)
 "/"         { fprintf(stderr, "[MULOP:%d]" , yylval.opval = SLASH); return MULOP; }
 "and"       { fprintf(stderr, "[MULOP:%d]" , yylval.opval = AND); return MULOP; }
 
+"^"         { fprintf(stderr, "[EXP:%d]", yylval.opval = CARROT);  return EXP; }
+
 "not"       { fprintf(stderr, "[NOT:%d]" , NOT); return NOT; }
 
 {number}    { fprintf(stderr, "[INUM:%d]", yylval.ival = atoi(yytext)); return INUM; }
@@ -63,7 +66,7 @@ comment2    \(\*.*\*\)
 {ident}     { fprintf(stderr,"[ID:%s]", yylval.sval = strdup(yytext)); return ID; }
 
 \n          { fprintf(stderr,"\n"); }
-.           { fprintf(stderr,"{%c}", yytext[0]); return yytext[0];}
+.           { fprintf(stderr,"{%c}", yytext[0]); return yytext[0]; }
 
 %%
 

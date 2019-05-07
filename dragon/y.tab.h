@@ -77,15 +77,19 @@ extern int yydebug;
     STAR = 287,
     SLASH = 288,
     AND = 289,
-    IF = 290,
-    THEN = 291,
-    ELSE = 292,
-    WHILE = 293,
-    DO = 294,
-    ARRAY_ACCESS = 295,
-    FUNCTION_CALL = 296,
-    PROCEDURE_CALL = 297,
-    PARAMLIST = 298
+    EXP = 290,
+    CARROT = 291,
+    IF = 292,
+    THEN = 293,
+    ELSE = 294,
+    WHILE = 295,
+    DO = 296,
+    FOR = 297,
+    TO = 298,
+    ARRAY_ACCESS = 299,
+    FUNCTION_CALL = 300,
+    PROCEDURE_CALL = 301,
+    PARAMLIST = 302
   };
 #endif
 /* Tokens.  */
@@ -121,15 +125,19 @@ extern int yydebug;
 #define STAR 287
 #define SLASH 288
 #define AND 289
-#define IF 290
-#define THEN 291
-#define ELSE 292
-#define WHILE 293
-#define DO 294
-#define ARRAY_ACCESS 295
-#define FUNCTION_CALL 296
-#define PROCEDURE_CALL 297
-#define PARAMLIST 298
+#define EXP 290
+#define CARROT 291
+#define IF 292
+#define THEN 293
+#define ELSE 294
+#define WHILE 295
+#define DO 296
+#define FOR 297
+#define TO 298
+#define ARRAY_ACCESS 299
+#define FUNCTION_CALL 300
+#define PROCEDURE_CALL 301
+#define PARAMLIST 302
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -144,10 +152,10 @@ union YYSTYPE
     char *sval; /*ID */
     /**********************************/
 
-    
+    arglist_t *aval;    
     tree_t *tval; /* tree struct */         /* syntax tree */
 
-#line 151 "y.tab.h" /* yacc.c:1909  */
+#line 159 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

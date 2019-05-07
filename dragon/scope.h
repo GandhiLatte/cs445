@@ -21,8 +21,11 @@ void *free_scope(scope_t * );
 scope_t *push_scope( scope_t * );
 scope_t *pop_scope( scope_t * );
 
+
+
 /* helpers */
 node_t *scope_search_all( scope_t *, char * );
 node_t *scope_search( scope_t *, char * );
 node_t *scope_insert( scope_t *, char * );
+node_t *edit_scope_id( scope_t *, char *, int);
 #endif

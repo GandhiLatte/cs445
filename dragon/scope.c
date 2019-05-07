@@ -81,6 +81,14 @@ node_t *scope_insert_func( scope_t *top, char *name, int type, int args, arglist
     return top->table[index];
 }
 
+node_t *edit_scope_id(scope_t *top, char *name, int type)
+{   
+    int index = hashpjw(name);
+    node_t *tmp = top->table[index];
+    top->table[index] = create_type(tmp,type);
+    return top->table[index];
+}
+
 /* indcluded in here the Peter J. Weinberger hash function */
 /* ----------------------------------------------------------------------------- 
  * hashpjw

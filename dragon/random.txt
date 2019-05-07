@@ -40,3 +40,8 @@ node_t *scope_search_expr(scope_t *top_scope, tree_t *tree)
 
     }
 }
+
+
+
+needed code later???!??
+    | factor EXP simple_expression { $$ = mkop(EXP,$2,$1,$3); }

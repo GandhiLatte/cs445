@@ -52,7 +52,11 @@ extern void leave();
 %token  <opval> MULOP
 %token  STAR SLASH AND
 
-%token  IF THEN ELSE WHILE DO
+%token  <opval> EXP
+%token  CARROT
+
+%token  IF THEN ELSE WHILE DO 
+%token  FOR TO
 %token  ARRAY_ACCESS
 %token  FUNCTION_CALL
 %token  PROCEDURE_CALL
@@ -92,7 +96,7 @@ extern void leave();
 %type <tval>    term
 %type <tval>    factor
  
-%type <tval>    declarations
+// %type <tval>    declarations
 %type <aval>    parameter_list
 %type <aval>    arguments
 %type <tval>    subprogram_declarations
@@ -148,10 +152,15 @@ declarations: declarations VAR identifier_list ':' type ';'
         { /* add_type_information($3,$5); */
             // this is where we are going to add type addressing
             //$$ = mktree(VAR, $1, $3);
-
+            /* 
+            for identfiier list
+                add type to each members node or tree? def not tree
+            call func passing tree and type;
+                func finds each ID in scope
+                sets node->type->type */
+            add_typing(top_scope,$3,$5);
         }
     | /*empty*/
-        { $$ = NULL; }
     ;
 
 type: standard_type
@@ -207,10 +216,6 @@ subprogram_declaration: subprogram_head declarations compound_statement
             yyerror("Error in Suprogram Head");
         }
 
-
-
-
-
         scope_t *tmp = top_scope;
         top_scope = pop_scope(tmp);
         $$ = NULL;  
@@ -220,6 +225,11 @@ subprogram_declaration: subprogram_head declarations compound_statement
 /* either a function of a procedure */
 subprogram_head: FUNCTION ID
     {
+        if(scope_search(top_scope,$2) != NULL)
+        {
+            yyerror("Variable Redclared (Function)");
+            exit(1);
+        }
         mkid(scope_insert(top_scope,$2));
         scope_t *tmp = top_scope;
         top_scope = push_scope(tmp);
@@ -228,24 +238,27 @@ subprogram_head: FUNCTION ID
     {
         // how to enter in the types and the other stuff to thing in a scope that we can't see.
         // could just go next scope and look at that.
-        //top_scope -> next?
-        //tmp scope = top_scope->next;
+        //top_scope -> next?%token <opval> CARROT
+        //tmp scope = top_sc%token <opval> CARROTnext;
         //
-        tree_t *tree = $6;
-        int type = tree->type; 
+        
         arglist_t *args = $4;
-        int num = args->num;
-        //scope_insert_func(top_scope,$2,type,num,args)
+        tree_t *tree = $6;
+        int type = tree->type;
+
+        //scope_insert_func(%token <opval> CARROTcope,$2,type,num,args)
         $$ = mktree(FUNCTION, NULL, NULL);
     }
     | PROCEDURE ID 
     {
+        if(scope_search(top_scope,$2) != NULL)
+        {
+            yyerror("Variable Redclared (Procedure)");
+            exit(1);
+        }
         mkid(scope_insert(top_scope,$2));
         scope_t *tmp = top_scope;
         top_scope = push_scope(tmp);
-    }
-    arguments ';'
-    {
         //argumetns is returning arglist_t
         $$ = mktree(PROCEDURE, NULL,NULL);
     }
@@ -266,11 +279,11 @@ arguments:'(' parameter_list ')'
 /* returning a arglist type */
 parameter_list: identifier_list ':' type
     {
-        mkarglist($1,$3);
+        $$ = mkarglist($1,$3);
     }
     | parameter_list ';' identifier_list ':' type
     {
-        $$ = mergelist($1,mkarglist($3,$5))
+        $$ = merge_list($1,mkarglist($3,$5));
     }
     ;
 
@@ -302,6 +315,14 @@ statement_list: statement
 
 statement: variable ASSIGNOP expression 
     {
+        tree_t *var = $1;
+        node_t *vartype = var->attribute.sval;
+        
+        if(vartype->id_type != typechecker($3))
+        {
+            yyerror("Mismatched Types in ASSIGNOP");
+            exit(1);
+        }
         $$ = mktree(ASSIGNOP,$1,$3); 
     }
     | procedure_statement { $$ = $1; }
@@ -310,6 +331,20 @@ statement: variable ASSIGNOP expression
       { $$ = mktree(IF,$2,mktree(THEN,$4,$6)); }
     | WHILE expression DO statement
       { $$ = mktree(WHILE,$2,$4); }
+    | FOR statement TO expression DO statement
+    {
+        if(typechecker($2) != INUM)
+        {
+            yyerror("Index Requires Integer");
+            exit(1);
+        } else if(typechecker($4) != INUM)
+        {
+            yyerror("Index Requires Integer");
+            exit(1);
+        } else{
+            $$ = mktree(FOR,$2,$4);
+        }
+    }
     ;
 
 /* Matched and unmatched statement for dangling else problem

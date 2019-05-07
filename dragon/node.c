@@ -6,14 +6,11 @@
 #include "node.h"
 
 /* CONSTRUCTOR */
-node_t *mknode( char *s, int type, int numargs, arglist_t *arglist )
+node_t *mknode(char *s)
 {
     node_t *p = (node_t *)malloc(sizeof(node_t));
     assert(p != NULL);
     p->name = strdup(s);
-    p->type = type;
-    p->numargs = numargs;
-    p->arglist = arglist;
     p->next = NULL;
     return p;
 }
@@ -33,7 +30,7 @@ node_t *node_search( node_t *top, char *name )
 /*  */
 node_t *node_insert( node_t *top, char *name)
 {
-    node_t *p = mknode(name, 0, 0, NULL);
+    node_t *p = mknode(name);
     p->next = top;
     return p;
 }
@@ -47,10 +44,18 @@ node_t *node_insert( node_t *top, char *name)
  */
 node_t *node_insert_func(arglist_t *arglist, node_t *top, char *name, int type, int args)
 {
-    node_t *p = mknode(name, type, args, arglist);
-    p->next = top;
-    return p;
+    //node_t *p = mknode(name, type, args, arglist);
+    // .... just edit them 4Head
+    //p->next = top;
+    return NULL;
 }
+
+node_t *create_type( node_t *name, int type)
+{
+    name->id_type = type;
+    return name;
+}
+
 
 void node_print( node_t *top)
 {
