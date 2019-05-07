@@ -170,3 +170,51 @@ void add_typing(scope_t *topscope, tree_t *idlist, tree_t *typer)
         idlist = tmp;
     }
 }
+
+
+// sematnics 5. something
+arglist_t *list_from_expr(tree_t *expr)
+{
+    arglist_t *argv;
+    arglist_t *tmp_arg;
+    tree_t *tmp;
+
+    assert(expr != NULL);
+    while(expr != NULL)
+    {
+        tmp_arg = argv;
+        tmp = expr->left;
+        if(expr->left == NULL && expr->right == NULL)
+        {
+            argv = add_type_list(typechecker(expr), tmp_arg);
+        } else if(expr->type == COMMA)
+        {
+            argv = add_type_list(typechecker(expr->right), tmp_arg);
+        } else
+        {
+            fprintf(stderr,"Big broke");
+        }
+        expr = tmp;
+    }
+}
+
+int compare_lists(arglist_t  *left, arglist_t *right)
+{
+    return 0;
+}
+
+
+arglist_t *add_type_list(int type, arglist_t *arg)
+{
+    arglist_t *tmp;
+    if(arg->next == NULL)
+    {
+        arg->type = type;
+        return arg;
+    } else 
+    {
+        tmp->next = arg;
+        tmp->type = type;
+        return tmp;
+    }
+}

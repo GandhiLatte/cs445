@@ -42,11 +42,11 @@ node_t *node_insert( node_t *top, char *name)
     return curr;
 }
  */
-node_t *node_insert_func(arglist_t *arglist, node_t *top, char *name, int type, int args)
+node_t *node_insert_func(arglist_t *arglist, node_t *top, int type, int args)
 {
-    //node_t *p = mknode(name, type, args, arglist);
-    // .... just edit them 4Head
-    //p->next = top;
+    top->arglist = arglist;
+    top->numargs = args;
+    top->return_type = type;
     return NULL;
 }
 

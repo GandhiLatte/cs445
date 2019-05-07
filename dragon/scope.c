@@ -77,7 +77,7 @@ node_t *scope_insert_func( scope_t *top, char *name, int type, int args, arglist
 {
     int index = hashpjw(name);
     node_t *tmp = top->table[index];
-    top->table[index] = node_insert_func(arglist,tmp,name,type,args);
+    top->table[index] = node_insert_func(arglist,tmp,type,args);
     return top->table[index];
 }
 

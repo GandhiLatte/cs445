@@ -238,15 +238,16 @@ subprogram_head: FUNCTION ID
     {
         // how to enter in the types and the other stuff to thing in a scope that we can't see.
         // could just go next scope and look at that.
-        //top_scope -> next?%token <opval> CARROT
-        //tmp scope = top_sc%token <opval> CARROTnext;
         //
         
         arglist_t *args = $4;
-        tree_t *tree = $6;
-        int type = tree->type;
+        int num = args->num;
+        tree_t *type_tree = $6;
+        int type = type_tree->type;
 
-        //scope_insert_func(%token <opval> CARROTcope,$2,type,num,args)
+        scope_insert_func(top_scope->next,$2,type,num,args);
+
+
         $$ = mktree(FUNCTION, NULL, NULL);
     }
     | PROCEDURE ID 
@@ -453,6 +454,23 @@ factor: ID
     }
     | ID '(' expression_list ')' 
     {
+        node_t *name = scope_search_all(top_scope,$1);
+        tree_t *expr_list = $3;
+        arglist_t *expr_args = list_from_expr(expr_list);
+        arglist_t *func_args = name->arglist;
+        int winner = compare_lists(expr_args, func_args);
+        if(winner == 0)
+        {
+            yyerror("Type mismatch in function call argmuments");
+            exit(1);
+        }
+        // we have our expr list data 
+
+        // call create arglist  from expr list
+
+        //compare expr list to func id expected list
+
+
         if(scope_search_all(top_scope,$1) == NULL)
         {
             yyerror("ID not declared for Function Call");
