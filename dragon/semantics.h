@@ -19,7 +19,9 @@ void add_typing(scope_t*, tree_t*,tree_t*);
 arglist_t *merge_list(arglist_t *, arglist_t*);
 
 
-tree_t *has_return(node_t *, tree_t *);
+tree_t *has_return(scope_t *, node_t *, tree_t *);
+int node_equiv(node_t *,node_t *);
+
 
 //function stuff
 arglist_t *list_from_expr(tree_t*);

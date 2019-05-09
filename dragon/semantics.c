@@ -146,49 +146,56 @@ arglist_t *merge_list(arglist_t *first, arglist_t *last)
 /* Why don't I just have it use the scope_search.
     If we already have the node name, what can we do. We have the scope and the node.
     Compare it against the node that it finds. If there isn't a node then dont do anything.   */
-tree_t *has_return(node_t *head, tree_t *body)
+tree_t *has_return(scope_t *top_scope, node_t *head, tree_t *body)
 {
-    if(body->right == NULL && body->left == NULL)
+    if(body->type == ASSIGNOP)
     {
-        if(body->type == ID)
+        node_t *search = scope_search_all(top_scope,body->left->attribute.sval->name);
+        if(node_equiv(head,search))
         {
-            if(strcmp(head->name,body->attribute.sval->name) != 0)
-            {
-                return body;
-            } else
-            {
-                return NULL;
-            }
+            return body;
         } else
         {
             return NULL;
         }
-    } else if(body->right == NULL || body->left == NULL)
+        
+    } else if (!body->left)
     {
-        if(body->right == NULL)
-        {
-            return has_return(head,body->left);
-        } else {
-            return has_return(head,body->right);
-        }
+        return NULL;
+    } else if(!body->right)
+    {
+        return NULL;
     } else
     {
-        tree_t *left = has_return(head,body->left);
-        tree_t *right = has_return(head,body->right);
-        if(left == NULL && right == NULL)
+        tree_t *left = has_return(top_scope,head,body->left);
+        tree_t *right = has_return(top_scope,head,body->right);
+        if(!left && !right)
         {
             return NULL;
-        } else {
-            if(left == NULL)
+        } else if(!left || !right)
+        {
+            if(!left)
             {
                 return right;
             } else
             {
                 return left;
-            }   
+            }
+        } else {
+            return NULL;
         }
     }
 }
+
+int node_equiv(node_t *left, node_t *right)
+{
+    if(strcmp(left->name,right->name) && left->id_type == right->id_type)
+    {
+        return 1;
+    }
+    return 0;
+}
+
 
 void add_typing(scope_t *topscope, tree_t *idlist, tree_t *typer)
 {
@@ -205,9 +212,6 @@ void add_typing(scope_t *topscope, tree_t *idlist, tree_t *typer)
             {
                 edit_scope_id(topscope, idlist->attribute.sval->name, type);
             }
-            else if (idlist->type == ARRAY)
-            {
-            }
         }
         else if (idlist->type == COMMA)
         {
@@ -220,6 +224,7 @@ void add_typing(scope_t *topscope, tree_t *idlist, tree_t *typer)
         } else if(idlist->type == ARRAY)
         {
             edit_scope_array(topscope, idlist->right->attribute.sval->name, type);
+            break;
         } else
         {
             printf("Done borked");

@@ -94,6 +94,7 @@ extern void leave();
 //%type <tval>    type       
 %type <tval>    expression
 %type <tval>    expression_list
+%type <tval>    simple_term
 %type <tval>    simple_expression
 %type <tval>    term
 %type <tval>    factor
@@ -210,12 +211,11 @@ subprogram_declaration: subprogram_head declarations subprogram_declarations com
         tree_t *cmp = $4;
         //$$ = mksubprog(PROGRAM,$1,$2,$3);
         tree_t *t = $1;
-
         if(t->type == FUNCTION)
         {   
             tree_t *t = $1;
             node_t *n = t->right->attribute.sval;
-            tree_t *ret_type = has_return(n,$4);
+            tree_t *ret_type = has_return(top_scope,n,$4);
             if(ret_type == NULL)
             {
                 yyerror("No return found");
@@ -229,7 +229,7 @@ subprogram_declaration: subprogram_head declarations subprogram_declarations com
             {
                 tree_t *t = $1;
                 node_t *n = t->right->attribute.sval;
-                tree_t *ret_type = has_return(n,$4);
+                tree_t *ret_type = has_return(top_scope,n,$4);
                 if( ret_type != NULL)
                 {
                     yyerror("Return found in Procedure");
@@ -467,8 +467,12 @@ simple_expression: term { $$ = $1; }
     | simple_expression ADDOP term { $$ = mkop(ADDOP,$2,$1,$3);}
     ;
 
-term: factor { $$ = $1; } 
+term: simple_term { $$ = $1; } 
     | term MULOP factor { $$ = mkop(MULOP,$2,$1,$3); }
+    ;
+
+simple_term: factor { $$ = $1; }
+    |  simple_term EXP simple_expression { $$ = mkop(EXP,$2,$1,$3); }
     ;
 
 factor: ID
