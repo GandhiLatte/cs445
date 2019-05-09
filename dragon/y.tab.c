@@ -547,11 +547,11 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint16 yyrline[] =
 {
        0,   117,   117,   131,   141,   153,   165,   168,   170,   186,
-     190,   196,   202,   208,   252,   251,   290,   289,   324,   329,
-     335,   339,   345,   352,   358,   364,   368,   371,   384,   385,
-     386,   388,   390,   409,   420,   437,   438,   444,   445,   448,
-     467,   483,   484,   485,   488,   489,   492,   501,   510,   530,
-     531,   532,   533
+     190,   196,   202,   208,   252,   251,   280,   279,   306,   311,
+     317,   321,   327,   334,   340,   346,   350,   353,   366,   367,
+     368,   370,   372,   391,   402,   419,   420,   426,   427,   430,
+     449,   465,   466,   467,   470,   471,   474,   483,   492,   512,
+     513,   514,   515
 };
 #endif
 
@@ -1520,7 +1520,7 @@ yyreduce:
   case 13:
 #line 209 "pc.y" /* yacc.c:1646  */
     {
-        tree_t *cmp = (yyvsp[-1].tval);
+        tree_t *cmp = (yyvsp[0].tval);
         //$$ = mksubprog(PROGRAM,$1,$2,$3);
         tree_t *t = (yyvsp[-3].tval);
 
@@ -1528,7 +1528,7 @@ yyreduce:
         {   
             tree_t *t = (yyvsp[-3].tval);
             node_t *n = t->right->attribute.sval;
-            tree_t *ret_type = has_return(n,(yyvsp[-1].tval));
+            tree_t *ret_type = has_return(n,(yyvsp[0].tval));
             if(ret_type == NULL)
             {
                 yyerror("No return found");
@@ -1542,7 +1542,7 @@ yyreduce:
             {
                 tree_t *t = (yyvsp[-3].tval);
                 node_t *n = t->right->attribute.sval;
-                tree_t *ret_type = has_return(n,(yyvsp[-1].tval));
+                tree_t *ret_type = has_return(n,(yyvsp[0].tval));
                 if( ret_type != NULL)
                 {
                     yyerror("Return found in Procedure");
@@ -1582,33 +1582,23 @@ yyreduce:
         // how to enter in the types and the other stuff to thing in a scope that we can't see.
         // could just go next scope and look at that.
         //
-        int num;
         arglist_t *args = (yyvsp[-3].aval);
-        if(!args)
-        {
-            num = 0;
-        }
-        else 
-        {
-            num = args->num;    
-        }
         tree_t *type_tree = (yyvsp[-1].tval);
         int type = type_tree->type;
 
         scope_t *ts = top_scope;
-
-        node_t *node = scope_insert_func(top_scope->next,(yyvsp[-5].sval),type,num,args);
+        node_t *node = scope_insert_func(top_scope->next,(yyvsp[-5].sval),type,args);
 
         top_scope = ts;
 
 
         (yyval.tval) = mktree(FUNCTION, NULL, mkid(node));
     }
-#line 1608 "y.tab.c" /* yacc.c:1646  */
+#line 1598 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 290 "pc.y" /* yacc.c:1646  */
+#line 280 "pc.y" /* yacc.c:1646  */
     {
         if(scope_search(top_scope,(yyvsp[0].sval)) != NULL)
         {
@@ -1622,105 +1612,97 @@ yyreduce:
         //argumetns is returning arglist_t
         
     }
-#line 1626 "y.tab.c" /* yacc.c:1646  */
+#line 1616 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 303 "pc.y" /* yacc.c:1646  */
+#line 293 "pc.y" /* yacc.c:1646  */
     {
-        int num;
-        arglist_t *args = (yyvsp[-1].aval);
-        if(args == NULL)
-        {
-            num = 0;
-        } else {
-            num = args->num;
-        }
-        
+        arglist_t *args = (yyvsp[-1].aval);   
 
         scope_t *tmps = top_scope;
-        node_t *node = scope_insert_proc(top_scope->next,(yyvsp[-3].sval),num,args);
+        node_t *node = scope_insert_proc(top_scope->next,(yyvsp[-3].sval),args);
         top_scope = tmps;
 
         (yyval.tval) = mktree(PROCEDURE, NULL,mkid(node));
     }
-#line 1648 "y.tab.c" /* yacc.c:1646  */
+#line 1630 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 325 "pc.y" /* yacc.c:1646  */
+#line 307 "pc.y" /* yacc.c:1646  */
     {
         (yyval.aval) = (yyvsp[-1].aval);
     }
-#line 1656 "y.tab.c" /* yacc.c:1646  */
+#line 1638 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 329 "pc.y" /* yacc.c:1646  */
+#line 311 "pc.y" /* yacc.c:1646  */
     {
         (yyval.aval) = NULL;
     }
-#line 1664 "y.tab.c" /* yacc.c:1646  */
+#line 1646 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 336 "pc.y" /* yacc.c:1646  */
+#line 318 "pc.y" /* yacc.c:1646  */
     {
         (yyval.aval) = mkarglist((yyvsp[-2].tval),(yyvsp[0].tval));
     }
-#line 1672 "y.tab.c" /* yacc.c:1646  */
+#line 1654 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 340 "pc.y" /* yacc.c:1646  */
+#line 322 "pc.y" /* yacc.c:1646  */
     {
         (yyval.aval) = merge_list((yyvsp[-4].aval),mkarglist((yyvsp[-2].tval),(yyvsp[0].tval)));
     }
-#line 1680 "y.tab.c" /* yacc.c:1646  */
+#line 1662 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 346 "pc.y" /* yacc.c:1646  */
+#line 328 "pc.y" /* yacc.c:1646  */
     {
             (yyval.tval) = (yyvsp[-1].tval);
         }
-#line 1688 "y.tab.c" /* yacc.c:1646  */
+#line 1670 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 353 "pc.y" /* yacc.c:1646  */
+#line 335 "pc.y" /* yacc.c:1646  */
     { 
         // if there is then we must go deeper    
         (yyval.tval) = (yyvsp[0].tval);
     }
-#line 1697 "y.tab.c" /* yacc.c:1646  */
+#line 1679 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 358 "pc.y" /* yacc.c:1646  */
+#line 340 "pc.y" /* yacc.c:1646  */
     { 
         // if there is nothing b/w begin and end then just pop
         (yyval.tval) = NULL;
     }
-#line 1706 "y.tab.c" /* yacc.c:1646  */
+#line 1688 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 365 "pc.y" /* yacc.c:1646  */
+#line 347 "pc.y" /* yacc.c:1646  */
     {
         (yyval.tval) = (yyvsp[0].tval);
     }
-#line 1714 "y.tab.c" /* yacc.c:1646  */
+#line 1696 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 368 "pc.y" /* yacc.c:1646  */
+#line 350 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = mktree(COMMA,(yyvsp[-2].tval),(yyvsp[0].tval)); }
-#line 1720 "y.tab.c" /* yacc.c:1646  */
+#line 1702 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 372 "pc.y" /* yacc.c:1646  */
+#line 354 "pc.y" /* yacc.c:1646  */
     {
         tree_t *var = (yyvsp[-2].tval);
         node_t *vartype = var->attribute.sval;
@@ -1733,35 +1715,35 @@ yyreduce:
         }
         (yyval.tval) = mktree(ASSIGNOP,(yyvsp[-2].tval),(yyvsp[0].tval)); 
     }
-#line 1737 "y.tab.c" /* yacc.c:1646  */
+#line 1719 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 384 "pc.y" /* yacc.c:1646  */
+#line 366 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = (yyvsp[0].tval); }
-#line 1743 "y.tab.c" /* yacc.c:1646  */
+#line 1725 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 385 "pc.y" /* yacc.c:1646  */
+#line 367 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = (yyvsp[0].tval); }
-#line 1749 "y.tab.c" /* yacc.c:1646  */
+#line 1731 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 387 "pc.y" /* yacc.c:1646  */
+#line 369 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = mktree(IF,(yyvsp[-4].tval),mktree(THEN,(yyvsp[-2].tval),(yyvsp[0].tval))); }
-#line 1755 "y.tab.c" /* yacc.c:1646  */
+#line 1737 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 389 "pc.y" /* yacc.c:1646  */
+#line 371 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = mktree(WHILE,(yyvsp[-2].tval),(yyvsp[0].tval)); }
-#line 1761 "y.tab.c" /* yacc.c:1646  */
+#line 1743 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 391 "pc.y" /* yacc.c:1646  */
+#line 373 "pc.y" /* yacc.c:1646  */
     {
         if(typechecker((yyvsp[-4].tval)) != INUM)
         {
@@ -1775,11 +1757,11 @@ yyreduce:
             (yyval.tval) = mktree(FOR,(yyvsp[-4].tval),(yyvsp[-2].tval));
         }
     }
-#line 1779 "y.tab.c" /* yacc.c:1646  */
+#line 1761 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 410 "pc.y" /* yacc.c:1646  */
+#line 392 "pc.y" /* yacc.c:1646  */
     {
         node_t *tmp = scope_search_all(top_scope,(yyvsp[0].sval));
         if(tmp == NULL)
@@ -1790,11 +1772,11 @@ yyreduce:
             (yyval.tval) = mkid(tmp);
         }
     }
-#line 1794 "y.tab.c" /* yacc.c:1646  */
+#line 1776 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 421 "pc.y" /* yacc.c:1646  */
+#line 403 "pc.y" /* yacc.c:1646  */
     {
         node_t *tmp = scope_search_all(top_scope,(yyvsp[-3].sval));
         if(tmp == NULL)
@@ -1809,37 +1791,37 @@ yyreduce:
         }
         (yyval.tval) = mktree(ARRAY_ACCESS,mkid(tmp), (yyvsp[-1].tval));
     }
-#line 1813 "y.tab.c" /* yacc.c:1646  */
+#line 1795 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 437 "pc.y" /* yacc.c:1646  */
+#line 419 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = mkid(scope_search_all(top_scope,(yyvsp[0].sval)));}
-#line 1819 "y.tab.c" /* yacc.c:1646  */
+#line 1801 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 439 "pc.y" /* yacc.c:1646  */
+#line 421 "pc.y" /* yacc.c:1646  */
     {
         (yyval.tval) = mktree(PROCEDURE_CALL,mkid(scope_search_all(top_scope,(yyvsp[-3].sval))),(yyvsp[-1].tval));
     }
-#line 1827 "y.tab.c" /* yacc.c:1646  */
+#line 1809 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 444 "pc.y" /* yacc.c:1646  */
+#line 426 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = (yyvsp[0].tval); }
-#line 1833 "y.tab.c" /* yacc.c:1646  */
+#line 1815 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 445 "pc.y" /* yacc.c:1646  */
+#line 427 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = mktree(COMMA,(yyvsp[-2].tval),(yyvsp[0].tval)); }
-#line 1839 "y.tab.c" /* yacc.c:1646  */
+#line 1821 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 449 "pc.y" /* yacc.c:1646  */
+#line 431 "pc.y" /* yacc.c:1646  */
     {
         int type;
         tree_t *tmp = (yyvsp[0].tval);
@@ -1858,11 +1840,11 @@ yyreduce:
         }
 
     }
-#line 1862 "y.tab.c" /* yacc.c:1646  */
+#line 1844 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 468 "pc.y" /* yacc.c:1646  */
+#line 450 "pc.y" /* yacc.c:1646  */
     {
         if(typechecker((yyvsp[-2].tval)) == 0 || typechecker((yyvsp[0].tval)) == 0)
         {
@@ -1876,41 +1858,41 @@ yyreduce:
             yyerror("Mismatched Types at relation");
         }
     }
-#line 1880 "y.tab.c" /* yacc.c:1646  */
+#line 1862 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 483 "pc.y" /* yacc.c:1646  */
+#line 465 "pc.y" /* yacc.c:1646  */
+    { (yyval.tval) = (yyvsp[0].tval); }
+#line 1868 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 42:
+#line 466 "pc.y" /* yacc.c:1646  */
+    { (yyval.tval) = mkop(ADDOP,(yyvsp[-1].opval),(yyvsp[0].tval),NULL); }
+#line 1874 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 467 "pc.y" /* yacc.c:1646  */
+    { (yyval.tval) = mkop(ADDOP,(yyvsp[-1].opval),(yyvsp[-2].tval),(yyvsp[0].tval));}
+#line 1880 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 470 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = (yyvsp[0].tval); }
 #line 1886 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 42:
-#line 484 "pc.y" /* yacc.c:1646  */
-    { (yyval.tval) = mkop(ADDOP,(yyvsp[-1].opval),(yyvsp[0].tval),NULL); }
+  case 45:
+#line 471 "pc.y" /* yacc.c:1646  */
+    { (yyval.tval) = mkop(MULOP,(yyvsp[-1].opval),(yyvsp[-2].tval),(yyvsp[0].tval)); }
 #line 1892 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 43:
-#line 485 "pc.y" /* yacc.c:1646  */
-    { (yyval.tval) = mkop(ADDOP,(yyvsp[-1].opval),(yyvsp[-2].tval),(yyvsp[0].tval));}
-#line 1898 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 44:
-#line 488 "pc.y" /* yacc.c:1646  */
-    { (yyval.tval) = (yyvsp[0].tval); }
-#line 1904 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 45:
-#line 489 "pc.y" /* yacc.c:1646  */
-    { (yyval.tval) = mkop(MULOP,(yyvsp[-1].opval),(yyvsp[-2].tval),(yyvsp[0].tval)); }
-#line 1910 "y.tab.c" /* yacc.c:1646  */
-    break;
-
   case 46:
-#line 493 "pc.y" /* yacc.c:1646  */
+#line 475 "pc.y" /* yacc.c:1646  */
     {
         if(scope_search_all(top_scope,(yyvsp[0].sval)) == NULL)
         {
@@ -1919,11 +1901,11 @@ yyreduce:
         }
         (yyval.tval) = mkid(scope_search_all(top_scope,(yyvsp[0].sval)));
     }
-#line 1923 "y.tab.c" /* yacc.c:1646  */
+#line 1905 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 502 "pc.y" /* yacc.c:1646  */
+#line 484 "pc.y" /* yacc.c:1646  */
     {  
         if(scope_search_all(top_scope,(yyvsp[-3].sval)) == NULL)
         { 
@@ -1932,11 +1914,11 @@ yyreduce:
         } 
         (yyval.tval) = mktree(ARRAY_ACCESS,mkid(scope_search_all(top_scope,(yyvsp[-3].sval))),(yyvsp[-1].tval)); 
     }
-#line 1936 "y.tab.c" /* yacc.c:1646  */
+#line 1918 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 511 "pc.y" /* yacc.c:1646  */
+#line 493 "pc.y" /* yacc.c:1646  */
     {
         node_t *name = scope_search_all(top_scope,(yyvsp[-3].sval));
         tree_t *expr_list = (yyvsp[-1].tval);
@@ -1956,35 +1938,35 @@ yyreduce:
         }
         (yyval.tval) = mktree(FUNCTION_CALL,mkid(scope_search_all(top_scope,(yyvsp[-3].sval))),(yyvsp[-1].tval)); 
     }
-#line 1960 "y.tab.c" /* yacc.c:1646  */
+#line 1942 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 530 "pc.y" /* yacc.c:1646  */
+#line 512 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = mkinum((yyvsp[0].ival)); (yyval.tval)->attribute.ival = (yyvsp[0].ival); }
-#line 1966 "y.tab.c" /* yacc.c:1646  */
+#line 1948 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 531 "pc.y" /* yacc.c:1646  */
+#line 513 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = mkrnum((yyvsp[0].rval)); (yyval.tval)->attribute.rval = (yyvsp[0].rval); }
-#line 1972 "y.tab.c" /* yacc.c:1646  */
+#line 1954 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 532 "pc.y" /* yacc.c:1646  */
+#line 514 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = (yyvsp[-1].tval); }
-#line 1978 "y.tab.c" /* yacc.c:1646  */
+#line 1960 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 533 "pc.y" /* yacc.c:1646  */
+#line 515 "pc.y" /* yacc.c:1646  */
     { (yyval.tval) = mktree(NOT,(yyvsp[0].tval),NULL);}
-#line 1984 "y.tab.c" /* yacc.c:1646  */
+#line 1966 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1988 "y.tab.c" /* yacc.c:1646  */
+#line 1970 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2212,7 +2194,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 537 "pc.y" /* yacc.c:1906  */
+#line 519 "pc.y" /* yacc.c:1906  */
 
 scope_t *top_scope;
 

@@ -43,17 +43,18 @@ node_t *node_insert( node_t *top, char *name)
     return curr;
 }
  */
-node_t *node_insert_func(arglist_t *arglist, node_t *top, int type, int args)
+node_t *node_insert_func(arglist_t *arglist, node_t *top, int type)
 {
     if(arglist != NULL)
     {
         top->arglist = arglist;
+    } else {
+        top->arglist = NULL;
     }
-    top->numargs = args;
-    top->return_type = type;
+    top->id_type = type;
     return top;
 }
-node_t *node_insert_proc(arglist_t *arglist, node_t *top, int args)
+node_t *node_insert_proc(arglist_t *arglist, node_t *top)
 {
     if(arglist != NULL)
     {
@@ -62,8 +63,7 @@ node_t *node_insert_proc(arglist_t *arglist, node_t *top, int args)
     {
         top->arglist = NULL;
     }
-    top->numargs = args;
-    top->return_type = 0;
+    top->id_type = 0;
     return top;
 }
 

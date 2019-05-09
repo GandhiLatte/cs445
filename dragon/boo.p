@@ -13,6 +13,10 @@ program main(input,output);
   for i := 1 to 10 do
     a := a * 2
  end;
+ function too(x: integer):integer;
+ begin
+  too := 12
+ end;
 begin
  a := a;
  foo

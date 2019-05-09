@@ -73,19 +73,19 @@ node_t *scope_insert( scope_t *top, char *name )
     return top->table[index];
 }
 
-node_t *scope_insert_func( scope_t *top, char *name, int type, int args, arglist_t *arglist)
+node_t *scope_insert_func( scope_t *top, char *name, int type, arglist_t *arglist)
 {
     int index = hashpjw(name);
     node_t *tmp = top->table[index];
-    top->table[index] = node_insert_func(arglist,tmp,type,args);
+    top->table[index] = node_insert_func(arglist,tmp,type);
     return top->table[index];
 }
 
-node_t *scope_insert_proc( scope_t *top, char *name, int args, arglist_t *arglist)
+node_t *scope_insert_proc( scope_t *top, char *name, arglist_t *arglist)
 {
     int index = hashpjw(name);
     node_t *tmp = top->table[index];
-    top->table[index] = node_insert_proc(arglist,tmp,args);
+    top->table[index] = node_insert_proc(arglist,tmp);
     return top->table[index];
 }
 

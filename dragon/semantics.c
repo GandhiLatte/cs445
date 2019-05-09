@@ -9,6 +9,16 @@
 #include "y.tab.h"
 
 //semantics 2.1 -- 2.3
+
+// we were running into problems when encountering return type variables. need to check a functions return type
+/* If its a function, how can we tell. We can tell it the function return type is not 0.
+    How else.
+    
+    We were also getting errors when checking arrays as a parameter. when declared in an expression
+    Am I passing the array type. Maybe not.
+    I could instead of building a tree when declaring an array, set its ID to its ID type.
+    I could also set the functions type as the id_type, getting rid of the return type variable. DUHH
+     */
 int typechecker(tree_t *tree)
 {
     int left;
@@ -131,6 +141,11 @@ arglist_t *merge_list(arglist_t *first, arglist_t *last)
 }
 
 //function return
+
+//error searchinng, can't find.
+/* Why don't I just have it use the scope_search.
+    If we already have the node name, what can we do. We have the scope and the node.
+    Compare it against the node that it finds. If there isn't a node then dont do anything.   */
 tree_t *has_return(node_t *head, tree_t *body)
 {
     if(body->right == NULL && body->left == NULL)
@@ -173,7 +188,6 @@ tree_t *has_return(node_t *head, tree_t *body)
             }   
         }
     }
-    
 }
 
 void add_typing(scope_t *topscope, tree_t *idlist, tree_t *typer)

@@ -207,7 +207,7 @@ subprogram_declarations: subprogram_declarations subprogram_declaration ';'
 /* deleted something here, anotehr thing of subprogram declarations */
 subprogram_declaration: subprogram_head declarations subprogram_declarations compound_statement
     {
-        tree_t *cmp = $3;
+        tree_t *cmp = $4;
         //$$ = mksubprog(PROGRAM,$1,$2,$3);
         tree_t *t = $1;
 
@@ -215,7 +215,7 @@ subprogram_declaration: subprogram_head declarations subprogram_declarations com
         {   
             tree_t *t = $1;
             node_t *n = t->right->attribute.sval;
-            tree_t *ret_type = has_return(n,$3);
+            tree_t *ret_type = has_return(n,$4);
             if(ret_type == NULL)
             {
                 yyerror("No return found");
@@ -229,7 +229,7 @@ subprogram_declaration: subprogram_head declarations subprogram_declarations com
             {
                 tree_t *t = $1;
                 node_t *n = t->right->attribute.sval;
-                tree_t *ret_type = has_return(n,$3);
+                tree_t *ret_type = has_return(n,$4);
                 if( ret_type != NULL)
                 {
                     yyerror("Return found in Procedure");
@@ -259,27 +259,17 @@ subprogram_head: FUNCTION ID
         scope_t *tmp = top_scope;
         top_scope = push_scope(tmp);
     } 
-    arguments ':' standard_type ';'
+    arguments ':'  standard_type ';'
     {
         // how to enter in the types and the other stuff to thing in a scope that we can't see.
         // could just go next scope and look at that.
         //
-        int num;
         arglist_t *args = $4;
-        if(!args)
-        {
-            num = 0;
-        }
-        else 
-        {
-            num = args->num;    
-        }
         tree_t *type_tree = $6;
         int type = type_tree->type;
 
         scope_t *ts = top_scope;
-
-        node_t *node = scope_insert_func(top_scope->next,$2,type,num,args);
+        node_t *node = scope_insert_func(top_scope->next,$2,type,args);
 
         top_scope = ts;
 
@@ -301,18 +291,10 @@ subprogram_head: FUNCTION ID
         
     } arguments ';'
     {
-        int num;
-        arglist_t *args = $4;
-        if(args == NULL)
-        {
-            num = 0;
-        } else {
-            num = args->num;
-        }
-        
+        arglist_t *args = $4;   
 
         scope_t *tmps = top_scope;
-        node_t *node = scope_insert_proc(top_scope->next,$2,num,args);
+        node_t *node = scope_insert_proc(top_scope->next,$2,args);
         top_scope = tmps;
 
         $$ = mktree(PROCEDURE, NULL,mkid(node));
