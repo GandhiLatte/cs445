@@ -21,13 +21,6 @@ Terminals unused in grammar
    PARAMLIST
 
 
-State 53 conflicts: 1 shift/reduce
-State 54 conflicts: 1 shift/reduce
-State 72 conflicts: 1 shift/reduce
-State 96 conflicts: 1 shift/reduce
-State 98 conflicts: 1 shift/reduce
-
-
 Grammar
 
     0 $accept: program $end
@@ -100,7 +93,7 @@ Grammar
    44     | term MULOP factor
 
    45 simple_term: factor
-   46            | simple_term EXP simple_expression
+   46            | simple_term EXP factor
 
    47 factor: ID
    48       | ID '[' expression ']'
@@ -216,13 +209,13 @@ expression_list (76)
 expression (77)
     on left: 38 39, on right: 26 29 30 31 33 36 37 48 52
 simple_expression (78)
-    on left: 40 41 42, on right: 38 39 42 46
+    on left: 40 41 42, on right: 38 39 42
 term (79)
     on left: 43 44, on right: 40 41 42 44
 simple_term (80)
     on left: 45 46, on right: 43 46
 factor (81)
-    on left: 47 48 49 50 51 52 53, on right: 44 45 53
+    on left: 47 48 49 50 51 52 53, on right: 44 45 46 53
 
 
 State 0
@@ -755,18 +748,16 @@ State 53
 
     MULOP  shift, and go to state 77
 
-    MULOP     [reduce using rule 40 (simple_expression)]
     $default  reduce using rule 40 (simple_expression)
 
 
 State 54
 
    43 term: simple_term .
-   46 simple_term: simple_term . EXP simple_expression
+   46 simple_term: simple_term . EXP factor
 
     EXP  shift, and go to state 78
 
-    EXP       [reduce using rule 43 (term)]
     $default  reduce using rule 43 (term)
 
 
@@ -956,7 +947,6 @@ State 72
 
     MULOP  shift, and go to state 77
 
-    MULOP     [reduce using rule 41 (simple_expression)]
     $default  reduce using rule 41 (simple_expression)
 
 
@@ -1030,19 +1020,15 @@ State 77
 
 State 78
 
-   46 simple_term: simple_term EXP . simple_expression
+   46 simple_term: simple_term EXP . factor
 
-    NOT    shift, and go to state 45
-    ID     shift, and go to state 46
-    INUM   shift, and go to state 47
-    RNUM   shift, and go to state 48
-    ADDOP  shift, and go to state 49
-    '('    shift, and go to state 50
+    NOT   shift, and go to state 45
+    ID    shift, and go to state 46
+    INUM  shift, and go to state 47
+    RNUM  shift, and go to state 48
+    '('   shift, and go to state 50
 
-    simple_expression  go to state 98
-    term               go to state 53
-    simple_term        go to state 54
-    factor             go to state 55
+    factor  go to state 98
 
 
 State 79
@@ -1210,7 +1196,6 @@ State 96
 
     MULOP  shift, and go to state 77
 
-    MULOP     [reduce using rule 42 (simple_expression)]
     $default  reduce using rule 42 (simple_expression)
 
 
@@ -1223,12 +1208,8 @@ State 97
 
 State 98
 
-   42 simple_expression: simple_expression . ADDOP term
-   46 simple_term: simple_term EXP simple_expression .
+   46 simple_term: simple_term EXP factor .
 
-    ADDOP  shift, and go to state 76
-
-    ADDOP     [reduce using rule 46 (simple_term)]
     $default  reduce using rule 46 (simple_term)
 
 

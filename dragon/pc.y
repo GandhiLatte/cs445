@@ -472,7 +472,11 @@ term: simple_term { $$ = $1; }
     ;
 
 simple_term: factor { $$ = $1; }
-    |  simple_term EXP simple_expression { $$ = mkop(EXP,$2,$1,$3); }
+    |  simple_term EXP factor 
+    {
+        // added exponents
+        $$ = mkop(EXP,$2,$1,$3); 
+    }
     ;
 
 factor: ID
